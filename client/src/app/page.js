@@ -131,15 +131,9 @@ export default function Home() {
               </div>
               <div className="mt-4 flex gap-4">
                 <Button variant="ghost" size="sm" asChild>
-                  <a href="https://github.com/nitin-is-me/the-blog-zone-client" target="_blank" rel="noopener noreferrer" className="gap-2">
+                  <a href="https://github.com/nitin-is-me/the-blog-zone" target="_blank" rel="noopener noreferrer" className="gap-2">
                     <Github className="h-4 w-4" />
-                    Frontend
-                  </a>
-                </Button>
-                <Button variant="ghost" size="sm" asChild>
-                  <a href="https://github.com/nitin-is-me/the-blog-zone-server" target="_blank" rel="noopener noreferrer" className="gap-2">
-                    <Github className="h-4 w-4" />
-                    Backend
+                    Source Code
                   </a>
                 </Button>
               </div>
