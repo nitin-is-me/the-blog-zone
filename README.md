@@ -1,5 +1,5 @@
 ## The Blog zone
-The Blog Zone is your personal or public blogging platform without any posting rules. Post whatever you want, but try to maintain the dignity of the platform as much as possible. This repository is hosted directly on vercel, so the code is transparent. You can check the server side code <a href="https://github.com/nitin-is-me/the-blog-zone-server/">here</a>. <br>
+The Blog Zone is your personal or public blogging platform without any posting rules. Post whatever you want, but try to maintain the dignity of the platform as much as possible. This repository is hosted directly on vercel, so the platform is completely transparent. <br>
 **The Project is live <a href="https://the-blog-zone.vercel.app">here</a>**
 
 ## Features
