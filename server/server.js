@@ -12,6 +12,10 @@ app.use(cors());
 app.use("/api/auth", authRouter);
 app.use("/api/blog", blogRouter);
 
+// API for checking server's health
+app.get("/api/health", ()=>{
+  res.status(200).send({"STATUS: Server is up and healthy});
+})
 
 // Test database connection and sync models
 (async () => {
