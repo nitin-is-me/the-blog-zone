@@ -14,7 +14,7 @@ app.use("/api/blog", blogRouter);
 
 // API for checking server's health
 app.get("/api/health", ()=>{
-  res.status(200).json({"STATUS: Server is up and healthy"});
+  res.status(200).json({"STATUS": "Server is up and healthy"});
 })
 
 // Test database connection and sync models
