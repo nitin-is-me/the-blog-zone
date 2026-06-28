@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import dynamic from 'next/dynamic';
 const RichTextEditor = dynamic(() => import('@/components/RichTextEditor'), { ssr: false });
+import { processHtmlImages } from '@/utils/supabaseClient';
 import { Switch } from "@/components/ui/switch";
 import {
   Card,
@@ -106,9 +107,16 @@ export default function EditBlogPage() {
 
       setIsSubmitting(true);
 
+      const { html: processedContent, urlMap } = await processHtmlImages(content);
+      
+      let finalThumbnail = selectedThumbnail;
+      if (selectedThumbnail && urlMap[selectedThumbnail]) {
+        finalThumbnail = urlMap[selectedThumbnail];
+      }
+
       await axios.put(
         `https://the-blog-zone-server.vercel.app/api/blog/edit/${id}`,
-        { title, content, private: isPrivate, thumbnail: selectedThumbnail },
+        { title, content: processedContent, private: isPrivate, thumbnail: finalThumbnail },
         {
           headers: {
             Authorization: `Bearer ${token}`,

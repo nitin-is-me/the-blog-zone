@@ -88,35 +88,11 @@ const MenuBar = ({ editor }) => {
       return;
     }
 
-    setIsUploading(true);
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      const { data, error } = await supabase.storage
-        .from('blog-images')
-        .upload(filePath, file);
-
-      if (error) {
-        throw error;
-      }
-
-      const { data: publicUrlData } = supabase.storage
-        .from('blog-images')
-        .getPublicUrl(filePath);
-
-      editor.chain().focus().setImage({ src: publicUrlData.publicUrl }).run();
-      toast.success('Image uploaded');
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error('Failed to upload image. Did you create the bucket?');
-    } finally {
-      setIsUploading(false);
-      // Reset input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+    const blobUrl = URL.createObjectURL(file);
+    editor.chain().focus().setImage({ src: blobUrl }).run();
+    
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
