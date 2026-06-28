@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
+import { stripHtml } from "@/utils/stripHtml";
 import { formatTimeAgo } from "../../../utils/formatTime";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,7 +10,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, User, Calendar, Lock, AlertTriangle } from "lucide-react";
+import { ArrowLeft, User, Calendar, Lock, AlertTriangle, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 
@@ -18,6 +19,9 @@ export default function BlogPostPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [loggedInUser, setLoggedInUser] = useState(null); // state for logged-in user
+  const [summary, setSummary] = useState("");
+  const [isSummarizing, setIsSummarizing] = useState(false);
+  const [summaryError, setSummaryError] = useState("");
   const router = useRouter();
   const { id } = useParams();
 
@@ -73,6 +77,24 @@ export default function BlogPostPage() {
     router.push("/dashboard/private");
   };
 
+  const handleSummarize = async () => {
+    if (!post || !post.content) return;
+    setIsSummarizing(true);
+    setSummaryError("");
+    try {
+      const strippedContent = stripHtml(post.content);
+      const response = await axios.post("http://localhost:8000/api/ai/summarize", {
+        content: strippedContent
+      });
+      setSummary(response.data.summary);
+    } catch (error) {
+      console.error(error);
+      setSummaryError("Failed to generate summary.");
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background p-6 flex flex-col items-center justify-center space-y-6">
@@ -124,6 +146,32 @@ export default function BlogPostPage() {
                   <span>{formatTimeAgo(post.createdAt)}</span>
                 </div>
               </div>
+
+              {!summary && (
+                <div className="flex justify-center sm:justify-start mt-6">
+                  <Button onClick={handleSummarize} disabled={isSummarizing} variant="outline" className="gap-2 border-indigo-200 hover:bg-indigo-50 dark:border-indigo-800 dark:hover:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 transition-all">
+                    {isSummarizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                    {isSummarizing ? 'Summarizing...' : 'Summarize with AI'}
+                  </Button>
+                </div>
+              )}
+              {summaryError && <p className="text-red-500 text-sm mt-2 text-center sm:text-left">{summaryError}</p>}
+              {summary && (
+                <div className="mt-8 p-6 bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl animate-in slide-in-from-top-4 duration-500 fade-in text-left">
+                  <h4 className="flex items-center font-semibold text-indigo-700 dark:text-indigo-400 mb-4 text-lg">
+                    <Sparkles className="w-5 h-5 mr-2" />
+                    AI Summary
+                  </h4>
+                  <ul className="space-y-3">
+                    {summary.split('\n').filter(line => line.trim().length > 0).map((line, idx) => (
+                      <li key={idx} className="text-muted-foreground text-sm sm:text-base leading-relaxed flex items-start">
+                        <span className="text-indigo-400 mr-2 mt-0.5">•</span>
+                        <span>{line.replace(/^-\s*/, '').trim()}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
             <Separator className="my-6" />

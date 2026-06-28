@@ -5,21 +5,23 @@ import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
 import { Button } from '@/components/ui/button';
-import { 
-  Bold, 
-  Italic, 
-  Strikethrough, 
-  Heading1, 
-  Heading2, 
-  List, 
-  ListOrdered, 
-  Link as LinkIcon, 
+import {
+  Bold,
+  Italic,
+  Strikethrough,
+  Heading1,
+  Heading2,
+  List,
+  ListOrdered,
+  Link as LinkIcon,
   Unlink,
   X,
   Image as ImageIcon,
-  Loader2
+  Loader2,
+  Sparkles
 } from 'lucide-react';
 import { useState, useRef } from 'react';
+import axios from 'axios';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/utils/supabaseClient';
@@ -30,6 +32,9 @@ const MenuBar = ({ editor }) => {
   const [linkUrl, setLinkUrl] = useState('');
   const [linkText, setLinkText] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState('improve_writing');
+  const [isAiLoading, setIsAiLoading] = useState(false);
   const fileInputRef = useRef(null);
 
   if (!editor) {
@@ -39,14 +44,14 @@ const MenuBar = ({ editor }) => {
   const openLinkModal = () => {
     const previousUrl = editor.getAttributes('link').href;
     setLinkUrl(previousUrl || '');
-    
+
     const { from, to } = editor.state.selection;
     if (from !== to) {
       setLinkText(editor.state.doc.textBetween(from, to, ' '));
     } else {
       setLinkText('');
     }
-    
+
     setIsLinkModalOpen(true);
   };
 
@@ -115,6 +120,36 @@ const MenuBar = ({ editor }) => {
     }
   };
 
+  const handleAiImprove = async () => {
+    const { from, to } = editor.state.selection;
+    if (from === to) {
+      toast.error('Please highlight some text first.');
+      setIsAiModalOpen(false);
+      return;
+    }
+    const text = editor.state.doc.textBetween(from, to, ' ');
+
+    setIsAiLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        'http://localhost:8000/api/ai/improve-text',
+        { text, prompt: aiPrompt },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const newText = response.data.result;
+      editor.chain().focus().insertContentAt({ from, to }, newText).run();
+      toast.success('Text improved!');
+      setIsAiModalOpen(false);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to improve text');
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-wrap items-center gap-1 p-1 border border-b-0 rounded-t-md bg-muted/40">
       <Button
@@ -153,9 +188,9 @@ const MenuBar = ({ editor }) => {
       >
         <Strikethrough className="h-4 w-4" />
       </Button>
-      
+
       <div className="w-px h-6 bg-border mx-1" />
-      
+
       <Button
         type="button"
         variant="ghost"
@@ -237,10 +272,10 @@ const MenuBar = ({ editor }) => {
 
       <div className="w-px h-6 bg-border mx-1" />
 
-      <input 
-        type="file" 
-        accept="image/*" 
-        className="hidden" 
+      <input
+        type="file"
+        accept="image/*"
+        className="hidden"
         ref={fileInputRef}
         onChange={handleImageUpload}
       />
@@ -257,6 +292,22 @@ const MenuBar = ({ editor }) => {
         {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageIcon className="h-4 w-4" />}
       </Button>
 
+      <div className="w-px h-6 bg-border mx-1" />
+
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={(e) => {
+          e.preventDefault();
+          setIsAiModalOpen(true);
+        }}
+        className="text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20"
+      >
+        <Sparkles className="h-4 w-4 mr-1" />
+        AI
+      </Button>
+
       {/* Custom Link Modal */}
       {isLinkModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
@@ -267,13 +318,13 @@ const MenuBar = ({ editor }) => {
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="linkText">Text to display</Label>
-                <Input 
-                  id="linkText" 
-                  placeholder="e.g. Click here" 
+                <Input
+                  id="linkText"
+                  placeholder="e.g. Click here"
                   value={linkText}
                   onChange={(e) => setLinkText(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleLinkSubmit(e)}
@@ -282,22 +333,70 @@ const MenuBar = ({ editor }) => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="linkUrl">URL</Label>
-                <Input 
-                  id="linkUrl" 
-                  placeholder="https://example.com" 
+                <Input
+                  id="linkUrl"
+                  placeholder="https://example.com"
                   value={linkUrl}
                   onChange={(e) => setLinkUrl(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleLinkSubmit(e)}
                   type="url"
                 />
               </div>
-              
+
               <div className="flex justify-end gap-2 mt-6">
                 <Button type="button" variant="outline" onClick={() => setIsLinkModalOpen(false)}>
                   Cancel
                 </Button>
                 <Button type="button" onClick={handleLinkSubmit}>
                   Save
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom AI Modal */}
+      {isAiModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-lg border bg-card p-6 shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-foreground flex items-center">
+                <Sparkles className="w-5 h-5 mr-2 text-indigo-500" />
+                Improve Text
+              </h3>
+              <Button variant="ghost" size="icon" onClick={() => setIsAiModalOpen(false)} className="h-8 w-8">
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Highlight some text in your editor, then select how you want to improve it.
+              </p>
+
+              <div className="space-y-2">
+                <Label>Action</Label>
+                <select
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={aiPrompt}
+                  onChange={(e) => setAiPrompt(e.target.value)}
+                >
+                  <option value="improve_writing">Improve Writing</option>
+                  <option value="make_concise">Make Concise</option>
+                  <option value="simplify">Simplify</option>
+                  <option value="make_engaging">Make Engaging</option>
+                  <option value="expand">Expand</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-2 mt-6">
+                <Button type="button" variant="outline" onClick={() => setIsAiModalOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="button" onClick={handleAiImprove} disabled={isAiLoading} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                  {isAiLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  {isAiLoading ? 'Improving...' : 'Apply'}
                 </Button>
               </div>
             </div>

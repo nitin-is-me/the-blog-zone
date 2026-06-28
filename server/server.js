@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const authRouter = require("./routes/authRouter");
 const blogRouter = require("./routes/blogRouter");
+const aiRouter = require("./routes/aiRoutes");
 const sequelize = require("./database"); // Sequelize instance
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -11,6 +12,7 @@ app.use(cors());
 
 app.use("/api/auth", authRouter);
 app.use("/api/blog", blogRouter);
+app.use("/api/ai", aiRouter);
 
 // Test database connection and sync models
 (async () => {
