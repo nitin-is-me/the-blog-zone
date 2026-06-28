@@ -17,6 +17,10 @@ const Comment = sequelize.define("Comment", {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
+  parentId: {
+    type: DataTypes.UUID,
+    allowNull: true,
+  }
 });
 
 // Associations
@@ -25,5 +29,8 @@ Comment.belongsTo(Blogger, { foreignKey: "authorId" });
 
 BlogPost.hasMany(Comment, { foreignKey: "postId", onDelete: "CASCADE" });
 Comment.belongsTo(BlogPost, { foreignKey: "postId" });
+
+Comment.hasMany(Comment, { as: 'replies', foreignKey: 'parentId', onDelete: 'CASCADE' });
+Comment.belongsTo(Comment, { as: 'parent', foreignKey: 'parentId' });
 
 module.exports = Comment;

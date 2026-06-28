@@ -28,9 +28,154 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Send, Trash2, Calendar, User, Clock, Loader2, Sparkles } from "lucide-react";
+import { ArrowLeft, Send, Trash2, Calendar, User, Clock, Loader2, Sparkles, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
+
+const buildCommentTree = (flatComments) => {
+  const commentMap = {};
+  const rootComments = [];
+  flatComments.forEach((comment) => {
+    commentMap[comment.id] = { ...comment, replies: [] };
+  });
+  flatComments.forEach((comment) => {
+    if (comment.parentId) {
+      if (commentMap[comment.parentId]) {
+        commentMap[comment.parentId].replies.push(commentMap[comment.id]);
+      }
+    } else {
+      rootComments.push(commentMap[comment.id]);
+    }
+  });
+  return rootComments;
+};
+
+const CommentNode = ({ comment, loggedInUser, deletingCommentId, onDelete, onReply, level = 0 }) => {
+  const [isReplying, setIsReplying] = useState(false);
+  const [replyText, setReplyText] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const submitReply = async (e) => {
+    e.preventDefault();
+    if (!replyText.trim()) return;
+    setIsSubmitting(true);
+    try {
+      await onReply(comment.id, replyText);
+      setReplyText("");
+      setIsReplying(false);
+    } catch (error) {}
+    setIsSubmitting(false);
+  };
+
+  return (
+    <div className={`mt-4 ${level > 0 ? 'ml-4 sm:ml-8 border-l-2 border-indigo-100 dark:border-indigo-900/50 pl-4' : ''}`}>
+      <Card className="bg-card/30 border-muted">
+        <CardContent className="p-4 space-y-3">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback className="text-xs">
+                  {comment.Blogger?.name?.charAt(0).toUpperCase() || "?"}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="text-sm font-semibold">
+                  {comment.Blogger ? (
+                    <Link
+                      href={comment.Blogger.username === loggedInUser?.username ? "/profile" : `/profile/${comment.Blogger.username}`}
+                      className="hover:underline hover:text-primary transition-colors"
+                    >
+                      {comment.Blogger.name}
+                    </Link>
+                  ) : "Anonymous"}
+                </p>
+                <p className="text-xs text-muted-foreground">{formatTimeAgo(comment.createdAt)}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1">
+              {loggedInUser && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:text-primary h-8 w-8"
+                  onClick={() => setIsReplying(!isReplying)}
+                >
+                  <MessageSquare className="h-4 w-4" />
+                </Button>
+              )}
+              {loggedInUser?.username === comment.Blogger?.username && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-muted-foreground hover:text-destructive h-8 w-8"
+                      disabled={deletingCommentId === comment.id}
+                    >
+                      {deletingCommentId === comment.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete comment?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this comment?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => onDelete(comment.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+            </div>
+          </div>
+          <p className="text-sm text-foreground/90 leading-relaxed pl-11">
+            {comment.content}
+          </p>
+          
+          {isReplying && (
+            <div className="pl-11 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
+              <form onSubmit={submitReply} className="space-y-3">
+                <Textarea
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  placeholder="Write a reply..."
+                  className="min-h-[80px] text-sm resize-y bg-background"
+                  autoFocus
+                />
+                <div className="flex justify-end gap-2">
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setIsReplying(false)}>Cancel</Button>
+                  <Button type="submit" size="sm" disabled={isSubmitting || !replyText.trim()}>
+                    {isSubmitting ? <Loader2 className="mr-2 h-3 w-3 animate-spin" /> : <Send className="mr-2 h-3 w-3" />}
+                    Reply
+                  </Button>
+                </div>
+              </form>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+      
+      {comment.replies && comment.replies.length > 0 && (
+        <div className="mt-2 space-y-2">
+          {comment.replies.map(reply => (
+            <CommentNode
+              key={reply.id}
+              comment={reply}
+              loggedInUser={loggedInUser}
+              deletingCommentId={deletingCommentId}
+              onDelete={onDelete}
+              onReply={onReply}
+              level={level + 1}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default function BlogPostPage() {
   const [post, setPost] = useState(null);
@@ -112,41 +257,47 @@ export default function BlogPostPage() {
     }
   };
 
-  const handleCommentSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!newComment.trim()) {
-      setCommentError("Comment cannot be empty.");
-      return;
-    }
-
-    setCommentError("");
-    setIsSubmitting(true);
-
+  const submitNewComment = async (content, parentId = null) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        setCommentError("You must be logged in to comment.");
-        return;
+        toast.error("You must be logged in to comment.");
+        throw new Error("Unauthorized");
       }
-      const response = await axios.post(
+      await axios.post(
         `http://localhost:8000/api/blog/${id}/comments`,
-        { content: newComment },
+        { content, parentId },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       // Fetch updated comments
       const commentResponse = await axios.get(`http://localhost:8000/api/blog/${id}`);
-      setComments(commentResponse.data.Comments);
-      setNewComment("");
-      toast.success("Comment posted!");
+      setComments(commentResponse.data.Comments || []);
+      toast.success(parentId ? "Reply posted!" : "Comment posted!");
     } catch (error) {
-      setCommentError(error?.response?.data?.message || "Failed to submit comment.");
-      toast.error("Failed to submit comment.");
-    } finally {
-      setIsSubmitting(false);
+      toast.error(error?.response?.data?.message || "Failed to submit comment.");
+      throw error;
     }
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) {
+      setCommentError("Comment cannot be empty.");
+      return;
+    }
+    setCommentError("");
+    setIsSubmitting(true);
+    try {
+      await submitNewComment(newComment, null);
+      setNewComment("");
+    } catch (error) {}
+    setIsSubmitting(false);
+  };
+  
+  const handleReplySubmit = async (parentId, replyText) => {
+    await submitNewComment(replyText, parentId);
   };
 
   const handleDeleteComment = async (commentId) => {
@@ -291,63 +442,17 @@ export default function BlogPostPage() {
 
               {/* all comments */}
               <div className="space-y-4">
-                {Comments.length > 0 ? (
-                  Comments.map((comment) => (
-                    <Card key={comment.id} className="bg-card/30 border-muted">
-                      <CardContent className="p-4 space-y-3">
-                        <div className="flex justify-between items-start">
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-8 w-8">
-                              <AvatarFallback className="text-xs">
-                                {comment.Blogger?.name?.charAt(0).toUpperCase() || "?"}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="text-sm font-semibold">
-                                {comment.Blogger ? (
-                                  <Link
-                                    href={comment.Blogger.username === loggedInUser?.username ? "/profile" : `/profile/${comment.Blogger.username}`}
-                                    className="hover:underline hover:text-primary transition-colors"
-                                  >
-                                    {comment.Blogger.name}
-                                  </Link>
-                                ) : "Anonymous"}
-                              </p>
-                              <p className="text-xs text-muted-foreground">{formatTimeAgo(comment.createdAt)}</p>
-                            </div>
-                          </div>
-                          {loggedInUser?.username === comment.Blogger?.username && (
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="text-muted-foreground hover:text-destructive h-8 w-8"
-                                  disabled={deletingCommentId === comment.id}
-                                >
-                                  {deletingCommentId === comment.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Delete comment?</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Are you sure you want to delete this comment?
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction onClick={() => handleDeleteComment(comment.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          )}
-                        </div>
-                        <p className="text-sm text-foreground/90 leading-relaxed pl-11">
-                          {comment.content}
-                        </p>
-                      </CardContent>
-                    </Card>
+                {buildCommentTree(Comments).length > 0 ? (
+                  buildCommentTree(Comments).map((comment) => (
+                    <CommentNode
+                      key={comment.id}
+                      comment={comment}
+                      loggedInUser={loggedInUser}
+                      deletingCommentId={deletingCommentId}
+                      onDelete={handleDeleteComment}
+                      onReply={handleReplySubmit}
+                      level={0}
+                    />
                   ))
                 ) : (
                   <div className="text-center py-10 text-muted-foreground">

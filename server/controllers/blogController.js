@@ -170,7 +170,7 @@ exports.getBlogById = async (req, res) => {
         },
         {
           model: Comment,
-          attributes: ['id', 'content', 'createdAt'],
+          attributes: ['id', 'content', 'createdAt', 'parentId'],
           include: {
             model: Blogger,
             attributes: ['name', 'username', 'createdAt'],
@@ -259,7 +259,7 @@ exports.deleteBlog = async (req, res) => {
 // Post a comment on a blog post
 exports.postComment = async (req, res) => {
   const { postId } = req.params;
-  const { content } = req.body;
+  const { content, parentId } = req.body;
 
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -273,7 +273,8 @@ exports.postComment = async (req, res) => {
     const comment = await Comment.create({
       content,
       authorId,
-      postId
+      postId,
+      parentId: parentId || null
     });
 
     const blog = await BlogPost.findByPk(postId);

@@ -11,8 +11,7 @@ You are given a choice whether you want to make your post publicly visible, or m
 You can edit the post anytime, and for privacy I haven't added the "updatedAt" visibility. Don't like the post? Delete it anytime (I added confirmation prompt later for deletion functions).
 ### Exact date and time of post
 Unlike many social medias where post is in "<time> ago" format, you'll see exact date and time of your post. (I implemented "<time> ago" format before, but exact time is more practical).
-### Scalable and rigid database
-I've switched from Non - relational database (MongoDB) to Relational database (PostgreSQL), so the application is scalable, and the data relations are much better and strong.
+
 ### Show what you feel about a post
 You can comment on a post to tell what you feel about the post, and can delete it whenever you want.
 
@@ -20,12 +19,35 @@ You can comment on a post to tell what you feel about the post, and can delete i
 You can change your display name, username (this part was really tough) and password by clicking on the top left icon on dashboard page. Spaces in password and username are not allowed from now.
 
 ### Private posts will be encrypted
-Your private posts are completely safe with node crypto encryption. Both title and content will be encrypted and original data will be replaced by some random letters and numbers before saving in database, and it'll only decrypt if the author himself is trying to access the post. Editing the private post will replace those characters with different random ones (example below). If you choose to make a private post public, then it'll decrypt the post permanently and add to public posts. Downside: Now you can't share private posts with URL to anyone, because they aren't the author of the post so their will be error while decryption.
+### Private posts will be encrypted
+Your private posts are completely safe. Both title and content will be securely encrypted before saving, and they'll only decrypt if the author himself is trying to access the post. Editing the private post will replace those characters with different random ones (example below). If you choose to make a private post public, then it'll decrypt the post permanently and add to public posts. Downside: Now you can't share private posts with URL to anyone, because they aren't the author of the post so their will be error while decryption.
 #### Practical example
 If I create a private post with title: "Test", and content: "Demo content", then in my database, the data will be saved as:<br><br> ![image](https://github.com/user-attachments/assets/a769b34e-d9b8-42e7-b345-a45a2f10c2ef)
 
 ### Search flawlessly through posts
 You can search through public/private posts with either "Title", "Content" or "Author"
+
+### Write with power (Rich Text & Images)
+I ditched the plain old textareas and implemented a proper Rich Text Editor. You can now format your text, add links, and upload images directly. Images are securely hosted and managed, and I even added an auto-cleanup feature so images get completely deleted from the servers if you ever delete your post or remove the image.
+
+### AI Writing Assistant & Summaries 
+Sometimes you know what to say but don't know how to say it. I've integrated lightning-fast AI directly into the editor. Just highlight any text to instantly improve your writing, make it concise, simplify, or expand it! Also, if a post is too long, readers can click a single button to get a quick 3-bullet-point AI summary without reading the whole thing. 
+
+> [!NOTE]
+> I intentionally limited the AI to just these few specific actions instead of bombarding the application with AI features. I didn't want to make the platform overly AI-centric just for the hype—I only used it where it actually provides genuine value without taking away the human element of blogging.
+
+### Infinitely Nested Comments
+Why stop at one layer? You can now reply directly to other comments on a post, creating deeply nested, threaded conversations that scale flawlessly.
+
+## For nerds
+If you are curious about what's powering this platform under the hood, here's the deep dive:
+- **Frontend**: Built with Next.js (React), styled with Tailwind CSS, and using Shadcn/UI for component design. The editor uses Tiptap.
+- **Backend**: Node.js and Express.js.
+- **Database**: PostgreSQL (migrated from MongoDB for strong relations). The infinitely nested comments use an efficient Adjacency List model in SQL.
+- **Security**: Node's built-in `crypto` library is used for AES encryption/decryption of private posts on the server.
+- **Storage**: Supabase storage buckets handle all the direct client-to-server image uploads and auto-cleanup.
+- **AI Integration**: Powered by Groq's `openai/gpt-oss-20b` model for instant text processing.
+- **Hosting**: The entire application is hosted and deployed on Vercel.
 
 
 ## Version History
@@ -56,6 +78,8 @@ You can search through public/private posts with either "Title", "Content" or "A
 |3.1.5    | **23-Dec-2025** | Edited description and added google-site-verification code (hoping my site appears under google results lol). |
 |4.0.0    | **27-Dec-2025** | BIG UPDATE: changed UI by implementing shadcn/ui components to refine the site. I have kept the old ui in the 'old-ui' branch of this repository. You can check changed.md file for the changes made. |
 |4.1.0    | **27-Dec-2025** | Added profile section for users to see their (and other users) posts and comments. |
+|5.0.0    | **28-Jun-2026** | BIG UPDATE (My exams are almost over so I have some free time to improve this project): Replaced plain text areas with a powerful Rich Text Editor (Tiptap). Implemented direct image uploads using Supabase buckets with smart auto-cleanup logic. Integrated lightning-fast AI (`openai/gpt-oss-20b`) to help writers polish their drafts and readers summarize long posts. |
+|5.1.0    | **28-Jun-2026** | Added infinitely nested comments (replies) using an efficient Adjacency List model in PostgreSQL. I won't be adding much after this as it seems nearly complete, and I've to focus more on my other project, [TeamVault](https://github.com/nitin-is-me/TeamVault). |
 
 --------------
 ### Contribute to the project
