@@ -70,11 +70,19 @@ export default function Home() {
           <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full pointer-events-none" />
 
           <Card className="relative border-none shadow-2xl bg-card/50 backdrop-blur-sm">
-            <CardHeader className="text-center space-y-4 pt-12 pb-8">
-              <CardTitle className="text-5xl font-extrabold tracking-tight lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600">
+            <CardHeader className="text-center space-y-3 pt-12 pb-8 flex flex-col items-center">
+              <CardTitle className="text-5xl font-extrabold tracking-tight lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600 pb-2">
                 The Blog Zone
               </CardTitle>
-              <CardDescription className="text-xl text-muted-foreground max-w-lg mx-auto">
+              <a
+                href="https://github.com/nitin-is-me/the-blog-zone#version-history"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 hover:border-primary/30 transition-colors cursor-pointer"
+              >
+                Version 4.1.5
+              </a>
+              <CardDescription className="text-xl text-muted-foreground max-w-lg mx-auto pt-3">
                 Dive into a world of creativity, ideas, and stories. Share yours or explore what others have to say.
               </CardDescription>
             </CardHeader>
