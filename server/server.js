@@ -14,6 +14,10 @@ app.use("/api/auth", authRouter);
 app.use("/api/blog", blogRouter);
 app.use("/api/ai", aiRouter);
 
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", message: "Server is running" });
+});
 // Test database connection and sync models
 (async () => {
   try {

@@ -44,7 +44,7 @@ export default function EditBlogPage() {
       }
 
       try {
-        const response = await axios.get(`http://localhost:8000/api/blog/${id}`, {
+        const response = await axios.get(`https://the-blog-zone-server.vercel.app/api/blog/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -105,9 +105,9 @@ export default function EditBlogPage() {
       }
 
       setIsSubmitting(true);
-      
+
       await axios.put(
-        `http://localhost:8000/api/blog/edit/${id}`,
+        `https://the-blog-zone-server.vercel.app/api/blog/edit/${id}`,
         { title, content, private: isPrivate, thumbnail: selectedThumbnail },
         {
           headers: {
@@ -180,8 +180,8 @@ export default function EditBlogPage() {
                 <Label className="text-lg">Select Thumbnail Cover</Label>
                 <div className="flex gap-4 overflow-x-auto pb-2">
                   {availableImages.map((url, idx) => (
-                    <div 
-                      key={idx} 
+                    <div
+                      key={idx}
                       className={`relative w-32 h-24 shrink-0 rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${selectedThumbnail === url ? 'border-primary ring-2 ring-primary/50' : 'border-transparent hover:border-primary/50'}`}
                       onClick={() => setSelectedThumbnail(url)}
                     >

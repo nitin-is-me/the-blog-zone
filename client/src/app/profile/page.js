@@ -74,7 +74,7 @@ export default function Profile() {
 
       try {
         // fetching user data
-        const userResponse = await axios.get("http://localhost:8000/api/auth/me", {
+        const userResponse = await axios.get("https://the-blog-zone-server.vercel.app/api/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -91,7 +91,7 @@ export default function Profile() {
 
         // fetching all posts to filter my content cuz i haven't created an endpoint for it yet
         setContentLoading(true);
-        const postsResponse = await axios.get("http://localhost:8000/api/blog");
+        const postsResponse = await axios.get("https://the-blog-zone-server.vercel.app/api/blog");
         const allPosts = postsResponse.data;
 
         // filter my posts (deduplicated)
@@ -231,7 +231,7 @@ export default function Profile() {
       }
 
       const response = await axios.put(
-        "http://localhost:8000/api/auth/updateProfile",
+        "https://the-blog-zone-server.vercel.app/api/auth/updateProfile",
         payload,
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -300,7 +300,7 @@ export default function Profile() {
     const token = localStorage.getItem("token");
     try {
       await axios.put(
-        "http://localhost:8000/api/auth/changePassword",
+        "https://the-blog-zone-server.vercel.app/api/auth/changePassword",
         {
           newPassword: formData.newPassword
         },

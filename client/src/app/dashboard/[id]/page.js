@@ -63,7 +63,7 @@ const CommentNode = ({ comment, loggedInUser, deletingCommentId, onDelete, onRep
       await onReply(comment.id, replyText);
       setReplyText("");
       setIsReplying(false);
-    } catch (error) {}
+    } catch (error) { }
     setIsSubmitting(false);
   };
 
@@ -134,7 +134,7 @@ const CommentNode = ({ comment, loggedInUser, deletingCommentId, onDelete, onRep
           <p className="text-sm text-foreground/90 leading-relaxed pl-11">
             {comment.content}
           </p>
-          
+
           {isReplying && (
             <div className="pl-11 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
               <form onSubmit={submitReply} className="space-y-3">
@@ -157,7 +157,7 @@ const CommentNode = ({ comment, loggedInUser, deletingCommentId, onDelete, onRep
           )}
         </CardContent>
       </Card>
-      
+
       {comment.replies && comment.replies.length > 0 && (
         <div className="mt-2 space-y-2">
           {comment.replies.map(reply => (
@@ -199,7 +199,7 @@ export default function BlogPostPage() {
 
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/blog/${id}`);
+        const response = await axios.get(`https://the-blog-zone-server.vercel.app/api/blog/${id}`);
         setPost(response.data);
         setComments(response.data.Comments || []);
       } catch (error) {
@@ -214,7 +214,7 @@ export default function BlogPostPage() {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await axios.get("http://localhost:8000/api/auth/me", {
+          const response = await axios.get("https://the-blog-zone-server.vercel.app/api/auth/me", {
             headers: { Authorization: `Bearer ${token}` },
           });
           setLoggedInUser(response.data);
@@ -245,7 +245,7 @@ export default function BlogPostPage() {
     setSummaryError("");
     try {
       const strippedContent = stripHtml(post.content);
-      const response = await axios.post("http://localhost:8000/api/ai/summarize", {
+      const response = await axios.post("https://the-blog-zone-server.vercel.app/api/ai/summarize", {
         content: strippedContent
       });
       setSummary(response.data.summary);
@@ -265,14 +265,14 @@ export default function BlogPostPage() {
         throw new Error("Unauthorized");
       }
       await axios.post(
-        `http://localhost:8000/api/blog/${id}/comments`,
+        `https://the-blog-zone-server.vercel.app/api/blog/${id}/comments`,
         { content, parentId },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       // Fetch updated comments
-      const commentResponse = await axios.get(`http://localhost:8000/api/blog/${id}`);
+      const commentResponse = await axios.get(`https://the-blog-zone-server.vercel.app/api/blog/${id}`);
       setComments(commentResponse.data.Comments || []);
       toast.success(parentId ? "Reply posted!" : "Comment posted!");
     } catch (error) {
@@ -292,10 +292,10 @@ export default function BlogPostPage() {
     try {
       await submitNewComment(newComment, null);
       setNewComment("");
-    } catch (error) {}
+    } catch (error) { }
     setIsSubmitting(false);
   };
-  
+
   const handleReplySubmit = async (parentId, replyText) => {
     await submitNewComment(replyText, parentId);
   };
@@ -307,7 +307,7 @@ export default function BlogPostPage() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:8000/api/blog/comment/${commentId}`, {
+      await axios.delete(`https://the-blog-zone-server.vercel.app/api/blog/comment/${commentId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -370,7 +370,7 @@ export default function BlogPostPage() {
                   <span>{formatTimeAgo(post.createdAt)}</span>
                 </div>
               </div>
-              
+
               {!summary && (
                 <div className="flex justify-center sm:justify-start mt-6">
                   <Button onClick={handleSummarize} disabled={isSummarizing} variant="outline" className="gap-2 border-indigo-200 hover:bg-indigo-50 dark:border-indigo-800 dark:hover:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 transition-all">
@@ -402,7 +402,7 @@ export default function BlogPostPage() {
 
             {/* post content */}
             <Card className="border-none shadow-none bg-transparent">
-              <CardContent 
+              <CardContent
                 className="p-0 text-lg leading-relaxed text-foreground/90 prose prose-sm sm:prose-base dark:prose-invert max-w-none"
                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
               />

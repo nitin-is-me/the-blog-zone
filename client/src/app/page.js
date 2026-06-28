@@ -24,7 +24,7 @@ export default function Home() {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await axios.get("http://localhost:8000/api/auth/verifyToken", {
+          const response = await axios.get("https://the-blog-zone-server.vercel.app/api/auth/verifyToken", {
             headers: {
               Authorization: `Bearer ${token}`,
             },

@@ -133,7 +133,7 @@ const MenuBar = ({ editor }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:8000/api/ai/improve-text',
+        'https://the-blog-zone-server.vercel.app/api/ai/improve-text',
         { text, prompt: aiPrompt },
         { headers: { Authorization: `Bearer ${token}` } }
       );

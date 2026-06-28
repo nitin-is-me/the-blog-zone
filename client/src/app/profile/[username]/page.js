@@ -40,7 +40,7 @@ export default function PublicProfile() {
             try {
                 setLoading(true);
                 // again fetching all posts
-                const response = await axios.get("http://localhost:8000/api/blog");
+                const response = await axios.get("https://the-blog-zone-server.vercel.app/api/blog");
                 const allPosts = response.data;
 
                 // again filtering posts by this user (deduplicated)
@@ -182,10 +182,10 @@ export default function PublicProfile() {
                                     onClick={() => router.push(`/dashboard/${post.id}`)}
                                 >
                                     {post.thumbnail && (
-                                      <div className="w-full h-48 overflow-hidden bg-muted shrink-0">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img src={post.thumbnail} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                                      </div>
+                                        <div className="w-full h-48 overflow-hidden bg-muted shrink-0">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img src={post.thumbnail} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                        </div>
                                     )}
                                     <CardHeader>
                                         <CardTitle className="text-lg hover:underline decoration-primary/50 underline-offset-4">

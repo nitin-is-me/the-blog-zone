@@ -37,7 +37,7 @@ export default function BlogPostPage() {
         return;
       }
       try {
-        const response = await axios.get(`http://localhost:8000/api/blog/${id}`, {
+        const response = await axios.get(`https://the-blog-zone-server.vercel.app/api/blog/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -57,7 +57,7 @@ export default function BlogPostPage() {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await axios.get("http://localhost:8000/api/auth/me", {
+          const response = await axios.get("https://the-blog-zone-server.vercel.app/api/auth/me", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -83,7 +83,7 @@ export default function BlogPostPage() {
     setSummaryError("");
     try {
       const strippedContent = stripHtml(post.content);
-      const response = await axios.post("http://localhost:8000/api/ai/summarize", {
+      const response = await axios.post("https://the-blog-zone-server.vercel.app/api/ai/summarize", {
         content: strippedContent
       });
       setSummary(response.data.summary);
