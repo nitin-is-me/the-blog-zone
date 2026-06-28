@@ -19,10 +19,16 @@ You can comment on a post to tell what you feel about the post, and can delete i
 You can change your display name, username (this part was really tough) and password by clicking on the top left icon on dashboard page. Spaces in password and username are not allowed from now.
 
 ### Private posts will be encrypted
-### Private posts will be encrypted
 Your private posts are completely safe. Both title and content will be securely encrypted before saving, and they'll only decrypt if the author himself is trying to access the post. Editing the private post will replace those characters with different random ones (example below). If you choose to make a private post public, then it'll decrypt the post permanently and add to public posts. Downside: Now you can't share private posts with URL to anyone, because they aren't the author of the post so their will be error while decryption.
-#### Practical example
-If I create a private post with title: "Test", and content: "Demo content", then in my database, the data will be saved as:<br><br> ![image](https://github.com/user-attachments/assets/a769b34e-d9b8-42e7-b345-a45a2f10c2ef)
+
+#### Database Representation
+This is how public posts appear in the database:
+
+<img width="621" height="138" alt="image" src="https://github.com/user-attachments/assets/fed1bbf5-f1aa-4c23-8f17-6e3ef8e71be8" />
+
+And, this is how private posts appear in the database
+
+<img width="621" height="138" alt="image" src="https://github.com/user-attachments/assets/0d56c1ba-42e2-48a8-a519-cf99de1e00ab" />
 
 ### Search flawlessly through posts
 You can search through public/private posts with either "Title", "Content" or "Author"
