@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -25,6 +25,7 @@ export default function EditBlogPage() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
+  const [selectedThumbnail, setSelectedThumbnail] = useState(null);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -52,6 +53,9 @@ export default function EditBlogPage() {
         setTitle(post.title);
         setContent(post.content);
         setIsPrivate(post.private);
+        if (post.thumbnail) {
+          setSelectedThumbnail(post.thumbnail);
+        }
       } catch (error) {
         const errorMsg = error.response?.data?.message || 'Failed to fetch post details.';
         setError(errorMsg);
@@ -63,6 +67,27 @@ export default function EditBlogPage() {
 
     fetchPost();
   }, [id]);
+
+  const availableImages = useMemo(() => {
+    if (!content) return [];
+    const urls = [];
+    const regex = /<img[^>]+src="([^">]+)"/g;
+    let match;
+    while ((match = regex.exec(content)) !== null) {
+      urls.push(match[1]);
+    }
+    return urls;
+  }, [content]);
+
+  useEffect(() => {
+    if (availableImages.length > 0) {
+      if (!selectedThumbnail || !availableImages.includes(selectedThumbnail)) {
+        setSelectedThumbnail(availableImages[0]);
+      }
+    } else {
+      setSelectedThumbnail(null);
+    }
+  }, [availableImages, selectedThumbnail]);
 
   const handleBack = () => {
     router.back();
@@ -80,10 +105,10 @@ export default function EditBlogPage() {
       }
 
       setIsSubmitting(true);
-
+      
       await axios.put(
         `http://localhost:8000/api/blog/edit/${id}`,
-        { title, content, private: isPrivate },
+        { title, content, private: isPrivate, thumbnail: selectedThumbnail },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -149,6 +174,24 @@ export default function EditBlogPage() {
                 className="text-lg font-medium"
               />
             </div>
+
+            {availableImages.length > 0 && (
+              <div className="space-y-2">
+                <Label className="text-lg">Select Thumbnail Cover</Label>
+                <div className="flex gap-4 overflow-x-auto pb-2">
+                  {availableImages.map((url, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`relative w-32 h-24 shrink-0 rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${selectedThumbnail === url ? 'border-primary ring-2 ring-primary/50' : 'border-transparent hover:border-primary/50'}`}
+                      onClick={() => setSelectedThumbnail(url)}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={url} alt={`Thumbnail option ${idx + 1}`} className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="content" className="text-lg">Content</Label>

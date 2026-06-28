@@ -257,6 +257,12 @@ export default function PrivatePosts() {
                 className="flex flex-col overflow-hidden border-muted hover:shadow-lg transition-all hover:border-primary/20 bg-card/50 backdrop-blur-sm cursor-pointer group"
                 onClick={() => router.push(`/dashboard/private/${post.id}`)}
               >
+                {post.thumbnail && (
+                  <div className="w-full h-48 overflow-hidden bg-muted shrink-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={post.thumbnail} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  </div>
+                )}
                 <CardHeader className="pb-3">
                   <CardTitle className="text-xl font-bold line-clamp-2 leading-tight group-hover:text-primary transition-colors">
                     {post.title}

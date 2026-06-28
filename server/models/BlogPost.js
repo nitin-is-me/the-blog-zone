@@ -20,6 +20,10 @@ const BlogPost = sequelize.define("BlogPost", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  thumbnail: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,

@@ -4,6 +4,7 @@ import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { formatTimeAgo } from "../../utils/formatTime";
+import { stripHtml } from "@/utils/stripHtml";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -177,9 +178,15 @@ export default function PublicProfile() {
                             userPosts.map(post => (
                                 <Card
                                     key={post.id}
-                                    className="hover:border-primary/50 transition-colors cursor-pointer"
+                                    className="hover:border-primary/50 transition-colors cursor-pointer overflow-hidden flex flex-col group"
                                     onClick={() => router.push(`/dashboard/${post.id}`)}
                                 >
+                                    {post.thumbnail && (
+                                      <div className="w-full h-48 overflow-hidden bg-muted shrink-0">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src={post.thumbnail} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                      </div>
+                                    )}
                                     <CardHeader>
                                         <CardTitle className="text-lg hover:underline decoration-primary/50 underline-offset-4">
                                             {post.title}
@@ -191,7 +198,7 @@ export default function PublicProfile() {
                                     </CardHeader>
                                     <CardContent>
                                         <p className="text-muted-foreground line-clamp-2 text-sm">
-                                            {post.content}
+                                            {stripHtml(post.content)}
                                         </p>
                                     </CardContent>
                                 </Card>

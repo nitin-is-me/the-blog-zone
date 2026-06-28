@@ -274,6 +274,12 @@ export default function Dashboard() {
                 className="group relative flex flex-col overflow-hidden border-muted transition-all hover:shadow-xl hover:border-primary/20 bg-card/50 backdrop-blur-sm cursor-pointer"
                 onClick={() => router.push(`/dashboard/${post.id}`)}
               >
+                {post.thumbnail && (
+                  <div className="w-full h-48 overflow-hidden bg-muted shrink-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={post.thumbnail} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  </div>
+                )}
                 <CardHeader className="pb-3">
                   <div className="flex justify-between items-start gap-4">
                     <CardTitle className="text-xl font-bold line-clamp-2 leading-tight group-hover:text-primary transition-colors">

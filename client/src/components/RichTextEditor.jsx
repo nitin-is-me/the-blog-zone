@@ -3,6 +3,7 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
+import Image from '@tiptap/extension-image';
 import { Button } from '@/components/ui/button';
 import { 
   Bold, 
@@ -14,16 +15,22 @@ import {
   ListOrdered, 
   Link as LinkIcon, 
   Unlink,
-  X
+  X,
+  Image as ImageIcon,
+  Loader2
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { supabase } from '@/utils/supabaseClient';
+import { toast } from 'sonner';
 
 const MenuBar = ({ editor }) => {
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
   const [linkText, setLinkText] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   if (!editor) {
     return null;
@@ -65,6 +72,47 @@ const MenuBar = ({ editor }) => {
     setIsLinkModalOpen(false);
     setLinkUrl('');
     setLinkText('');
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('blog-images')
+        .upload(filePath, file);
+
+      if (error) {
+        throw error;
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from('blog-images')
+        .getPublicUrl(filePath);
+
+      editor.chain().focus().setImage({ src: publicUrlData.publicUrl }).run();
+      toast.success('Image uploaded');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Failed to upload image. Did you create the bucket?');
+    } finally {
+      setIsUploading(false);
+      // Reset input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   };
 
   return (
@@ -187,6 +235,28 @@ const MenuBar = ({ editor }) => {
         <Unlink className="h-4 w-4" />
       </Button>
 
+      <div className="w-px h-6 bg-border mx-1" />
+
+      <input 
+        type="file" 
+        accept="image/*" 
+        className="hidden" 
+        ref={fileInputRef}
+        onChange={handleImageUpload}
+      />
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        disabled={isUploading}
+        onClick={(e) => {
+          e.preventDefault();
+          fileInputRef.current?.click();
+        }}
+      >
+        {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageIcon className="h-4 w-4" />}
+      </Button>
+
       {/* Custom Link Modal */}
       {isLinkModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
@@ -242,6 +312,11 @@ export default function RichTextEditor({ value, onChange }) {
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Image.configure({
+        HTMLAttributes: {
+          class: 'rounded-md max-w-full my-4 border',
+        },
+      }),
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {

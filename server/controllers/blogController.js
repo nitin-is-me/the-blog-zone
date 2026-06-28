@@ -3,11 +3,48 @@ const jwt = require("jsonwebtoken");
 const Comment = require('../models/Comment');
 const Blogger = require('../models/Blogger');
 const { encrypt, decrypt } = require('../utils/crypto-utils'); // Import the crypto utilities
+const { createClient } = require('@supabase/supabase-js');
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
+
+// Helper to extract image URLs from HTML content
+const extractImageUrls = (htmlContent) => {
+  if (!htmlContent) return [];
+  const urls = [];
+  const regex = /<img[^>]+src="([^">]+)"/g;
+  let match;
+  while ((match = regex.exec(htmlContent)) !== null) {
+    urls.push(match[1]);
+  }
+  return urls;
+};
+
+// Helper to delete images from Supabase bucket
+const deleteSupabaseImages = async (urls) => {
+  if (!supabase || !urls || urls.length === 0) return;
+  try {
+    const filePaths = urls
+      .filter(url => url.includes('/storage/v1/object/public/blog-images/'))
+      .map(url => {
+        const parts = url.split('/blog-images/');
+        return parts.length > 1 ? parts[1] : null;
+      })
+      .filter(Boolean);
+
+    if (filePaths.length > 0) {
+      await supabase.storage.from('blog-images').remove(filePaths);
+    }
+  } catch (error) {
+    console.error('Error deleting images from Supabase:', error);
+  }
+};
 
 // Create a new blog post
 exports.postBlog = async (req, res) => {
   try {
-    const { title, content, private } = req.body;
+    const { title, content, private, thumbnail } = req.body;
 
     // Extracting user info from the jwt
     const token = req.headers.authorization?.split(" ")[1];
@@ -21,11 +58,13 @@ exports.postBlog = async (req, res) => {
     // Encrypt content and title if post is private
     const encryptedContent = private ? encrypt(content) : content;
     const encryptedTitle = private ? encrypt(title) : title;
+    const encryptedThumbnail = private && thumbnail ? encrypt(thumbnail) : (thumbnail || null);
 
     // Creating a new blog post with the author's ID
     const newPost = await BlogPost.create({
       title: encryptedTitle,
       content: encryptedContent, // Store encrypted content if private
+      thumbnail: encryptedThumbnail,
       authorId,
       private
     });
@@ -34,7 +73,8 @@ exports.postBlog = async (req, res) => {
     const responsePost = {
       ...newPost.get({ plain: true }),
       title: private ? title : newPost.title, // Return original title to user
-      content: private ? content : newPost.content // Return original content to user
+      content: private ? content : newPost.content, // Return original content to user
+      thumbnail: private && thumbnail ? thumbnail : newPost.thumbnail
     };
 
     res.status(201).json({
@@ -105,7 +145,8 @@ exports.getPrivateBlogs = async (req, res) => {
       return {
         ...plainPost,
         title: decrypt(plainPost.title),
-        content: decrypt(plainPost.content)
+        content: decrypt(plainPost.content),
+        thumbnail: plainPost.thumbnail ? decrypt(plainPost.thumbnail) : null
       };
     });
 
@@ -162,6 +203,7 @@ exports.getBlogById = async (req, res) => {
       const plainBlog = blog.get({ plain: true });
       plainBlog.title = decrypt(plainBlog.title);
       plainBlog.content = decrypt(plainBlog.content);
+      if (plainBlog.thumbnail) plainBlog.thumbnail = decrypt(plainBlog.thumbnail);
       return res.status(200).json(plainBlog);
     }
 
@@ -195,6 +237,17 @@ exports.deleteBlog = async (req, res) => {
       return res.status(403).json({ message: 'You are not authorized to delete this post.' });
     }
     
+    // Auto-cleanup images from Supabase
+    let plainContent = blog.content;
+    let plainThumbnail = blog.thumbnail;
+    if (blog.private) {
+      plainContent = decrypt(blog.content);
+      if (plainThumbnail) plainThumbnail = decrypt(blog.thumbnail);
+    }
+    const urlsToDelete = extractImageUrls(plainContent);
+    if (plainThumbnail) urlsToDelete.push(plainThumbnail);
+    await deleteSupabaseImages(urlsToDelete);
+
     await blog.destroy();
     res.status(200).send("Deleted successfully");
   } catch (error) {
@@ -275,7 +328,7 @@ exports.deleteComment = async (req, res) => {
 exports.editBlog = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, content, private } = req.body;
+    const { title, content, private, thumbnail } = req.body;
 
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
@@ -295,9 +348,27 @@ exports.editBlog = async (req, res) => {
       return res.status(403).json({ message: "You are not authorized to edit this post." });
     }
 
+    // Auto-cleanup orphaned images
+    let oldPlainContent = blog.content;
+    let oldPlainThumbnail = blog.thumbnail;
+    if (blog.private) {
+      oldPlainContent = decrypt(blog.content);
+      if (oldPlainThumbnail) oldPlainThumbnail = decrypt(blog.thumbnail);
+    }
+    const oldUrls = extractImageUrls(oldPlainContent);
+    if (oldPlainThumbnail) oldUrls.push(oldPlainThumbnail);
+
+    const newUrls = extractImageUrls(content || oldPlainContent);
+    const newPlainThumbnail = thumbnail !== undefined ? thumbnail : oldPlainThumbnail;
+    if (newPlainThumbnail) newUrls.push(newPlainThumbnail);
+
+    const orphanedUrls = oldUrls.filter(url => !newUrls.includes(url));
+    await deleteSupabaseImages(orphanedUrls);
+
    // Handle privacy status changes and content updates
     let updatedContent = content || blog.content;
     let updatedTitle = title || blog.title;
+    let updatedThumbnail = thumbnail !== undefined ? thumbnail : blog.thumbnail;
     
     // If privacy status is changing or content/title is being updated
     if (blog.private) {
@@ -306,6 +377,7 @@ exports.editBlog = async (req, res) => {
         // Changing to public - decrypt existing fields if no new values provided
         updatedContent = content || decrypt(blog.content);
         updatedTitle = title || decrypt(blog.title);
+        updatedThumbnail = thumbnail !== undefined ? thumbnail : (blog.thumbnail ? decrypt(blog.thumbnail) : null);
       } else {
         // Staying private
         // If new content provided, encrypt it
@@ -316,6 +388,10 @@ exports.editBlog = async (req, res) => {
         if (title) {
           updatedTitle = encrypt(title);
         }
+        // If new thumbnail provided, encrypt it
+        if (thumbnail !== undefined) {
+          updatedThumbnail = thumbnail ? encrypt(thumbnail) : null;
+        }
       }
     } else {
       // If currently public
@@ -323,6 +399,7 @@ exports.editBlog = async (req, res) => {
         // Changing to private - encrypt all fields
         updatedContent = encrypt(content || blog.content);
         updatedTitle = encrypt(title || blog.title);
+        updatedThumbnail = (thumbnail !== undefined ? thumbnail : blog.thumbnail) ? encrypt(thumbnail !== undefined ? thumbnail : blog.thumbnail) : null;
       }
       // If staying public, no encryption needed
     }
@@ -330,6 +407,7 @@ exports.editBlog = async (req, res) => {
     // Update the blog post
     blog.title = updatedTitle;
     blog.content = updatedContent;
+    blog.thumbnail = updatedThumbnail;
     blog.private = private !== undefined ? private : blog.private;
 
     const updatedBlog = await blog.save();
@@ -339,6 +417,7 @@ exports.editBlog = async (req, res) => {
     if (responseBlog.private) {
       responseBlog.title = decrypt(responseBlog.title);
       responseBlog.content = decrypt(responseBlog.content);
+      if (responseBlog.thumbnail) responseBlog.thumbnail = decrypt(responseBlog.thumbnail);
     }
     
     res.status(200).json({ 
