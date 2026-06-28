@@ -7,7 +7,8 @@ import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import dynamic from 'next/dynamic';
+const RichTextEditor = dynamic(() => import('@/components/RichTextEditor'), { ssr: false });
 import { Switch } from "@/components/ui/switch";
 import {
   Card,
@@ -47,7 +48,7 @@ export default function CreateBlogPage() {
       }
 
       await axios.post(
-        'https://the-blog-zone-server.vercel.app/api/blog/create',
+        'http://localhost:8000/api/blog/create',
         { title, content, private: isPrivate },
         {
           headers: {
@@ -109,14 +110,9 @@ export default function CreateBlogPage() {
 
             <div className="space-y-2">
               <Label htmlFor="content" className="text-lg">Content</Label>
-              <Textarea
-                id="content"
-                placeholder="Write your story here..."
+              <RichTextEditor
                 value={content}
-                onChange={(e) => setContent(e.target.value)}
-                required
-                disabled={isSubmitting}
-                className="min-h-[300px] text-base leading-relaxed resize-y"
+                onChange={(html) => setContent(html)}
               />
             </div>
 

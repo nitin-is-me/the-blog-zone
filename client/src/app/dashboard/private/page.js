@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { formatTimeAgo } from "../../utils/formatTime";
+import { stripHtml } from "@/utils/stripHtml";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,7 +55,7 @@ export default function PrivatePosts() {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await axios.get("https://the-blog-zone-server.vercel.app/api/auth/me", {
+          const response = await axios.get("http://localhost:8000/api/auth/me", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -75,7 +76,7 @@ export default function PrivatePosts() {
         return;
       }
       try {
-        const response = await axios.get("https://the-blog-zone-server.vercel.app/api/blog/blogs/private", {
+        const response = await axios.get("http://localhost:8000/api/blog/blogs/private", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -108,7 +109,7 @@ export default function PrivatePosts() {
         case "title":
           return post.title.toLowerCase().includes(query);
         case "content":
-          return post.content.toLowerCase().includes(query);
+          return stripHtml(post.content).toLowerCase().includes(query);
         default:
           return true;
       }
@@ -134,7 +135,7 @@ export default function PrivatePosts() {
     setDeletingPostId(postId);
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`https://the-blog-zone-server.vercel.app/api/blog/delete/${postId}`, {
+      await axios.delete(`http://localhost:8000/api/blog/delete/${postId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -267,7 +268,7 @@ export default function PrivatePosts() {
                 </CardHeader>
                 <CardContent className="flex-grow pb-4">
                   <p className="text-muted-foreground text-sm line-clamp-3">
-                    {post.content}
+                    {stripHtml(post.content)}
                   </p>
                 </CardContent>
 

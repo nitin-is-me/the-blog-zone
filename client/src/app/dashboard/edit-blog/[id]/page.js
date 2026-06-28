@@ -7,7 +7,8 @@ import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import dynamic from 'next/dynamic';
+const RichTextEditor = dynamic(() => import('@/components/RichTextEditor'), { ssr: false });
 import { Switch } from "@/components/ui/switch";
 import {
   Card,
@@ -42,7 +43,7 @@ export default function EditBlogPage() {
       }
 
       try {
-        const response = await axios.get(`https://the-blog-zone-server.vercel.app/api/blog/${id}`, {
+        const response = await axios.get(`http://localhost:8000/api/blog/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -81,7 +82,7 @@ export default function EditBlogPage() {
       setIsSubmitting(true);
 
       await axios.put(
-        `https://the-blog-zone-server.vercel.app/api/blog/edit/${id}`,
+        `http://localhost:8000/api/blog/edit/${id}`,
         { title, content, private: isPrivate },
         {
           headers: {
@@ -151,14 +152,9 @@ export default function EditBlogPage() {
 
             <div className="space-y-2">
               <Label htmlFor="content" className="text-lg">Content</Label>
-              <Textarea
-                id="content"
-                placeholder="Write your story here..."
+              <RichTextEditor
                 value={content}
-                onChange={(e) => setContent(e.target.value)}
-                required
-                disabled={isSubmitting}
-                className="min-h-[300px] text-base leading-relaxed resize-y"
+                onChange={(html) => setContent(html)}
               />
             </div>
 

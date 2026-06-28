@@ -39,7 +39,7 @@ export default function PublicProfile() {
             try {
                 setLoading(true);
                 // again fetching all posts
-                const response = await axios.get("https://the-blog-zone-server.vercel.app/api/blog");
+                const response = await axios.get("http://localhost:8000/api/blog");
                 const allPosts = response.data;
 
                 // again filtering posts by this user (deduplicated)

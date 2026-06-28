@@ -4,6 +4,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { formatTimeAgo } from "../utils/formatTime";
+import { stripHtml } from "@/utils/stripHtml";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,7 +60,7 @@ export default function Dashboard() {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await axios.get("https://the-blog-zone-server.vercel.app/api/auth/me", {
+          const response = await axios.get("http://localhost:8000/api/auth/me", {
             headers: { Authorization: `Bearer ${token}` },
           });
           setCurrentUser(response.data);
@@ -75,7 +76,7 @@ export default function Dashboard() {
 
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("https://the-blog-zone-server.vercel.app/api/blog");
+        const response = await axios.get("http://localhost:8000/api/blog");
         setPosts(response.data);
         setFilteredPosts(response.data);
       } catch (error) {
@@ -107,7 +108,7 @@ export default function Dashboard() {
         case "title":
           return post.title.toLowerCase().includes(query);
         case "content":
-          return post.content.toLowerCase().includes(query);
+          return stripHtml(post.content).toLowerCase().includes(query);
         case "author":
           return post.Blogger.name.toLowerCase().includes(query);
         default:
@@ -124,7 +125,7 @@ export default function Dashboard() {
     setDeletingPostId(postId);
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`https://the-blog-zone-server.vercel.app/api/blog/delete/${postId}`, {
+      await axios.delete(`http://localhost:8000/api/blog/delete/${postId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -292,7 +293,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent className="flex-grow pb-4">
                   <p className="text-muted-foreground line-clamp-3 text-sm leading-relaxed">
-                    {post.content}
+                    {stripHtml(post.content)}
                   </p>
                 </CardContent>
 

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
+import DOMPurify from "isomorphic-dompurify";
 import { formatTimeAgo } from "../../utils/formatTime";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -49,7 +50,7 @@ export default function BlogPostPage() {
 
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`https://the-blog-zone-server.vercel.app/api/blog/${id}`);
+        const response = await axios.get(`http://localhost:8000/api/blog/${id}`);
         setPost(response.data);
         setComments(response.data.Comments || []);
       } catch (error) {
@@ -64,7 +65,7 @@ export default function BlogPostPage() {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await axios.get("https://the-blog-zone-server.vercel.app/api/auth/me", {
+          const response = await axios.get("http://localhost:8000/api/auth/me", {
             headers: { Authorization: `Bearer ${token}` },
           });
           setLoggedInUser(response.data);
@@ -107,14 +108,14 @@ export default function BlogPostPage() {
         return;
       }
       const response = await axios.post(
-        `https://the-blog-zone-server.vercel.app/api/blog/${id}/comments`,
+        `http://localhost:8000/api/blog/${id}/comments`,
         { content: newComment },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       // Fetch updated comments
-      const commentResponse = await axios.get(`https://the-blog-zone-server.vercel.app/api/blog/${id}`);
+      const commentResponse = await axios.get(`http://localhost:8000/api/blog/${id}`);
       setComments(commentResponse.data.Comments);
       setNewComment("");
       toast.success("Comment posted!");
@@ -133,7 +134,7 @@ export default function BlogPostPage() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`https://the-blog-zone-server.vercel.app/api/blog/comment/${commentId}`, {
+      await axios.delete(`http://localhost:8000/api/blog/comment/${commentId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -202,9 +203,10 @@ export default function BlogPostPage() {
 
             {/* post content */}
             <Card className="border-none shadow-none bg-transparent">
-              <CardContent className="p-0 text-lg leading-relaxed text-foreground/90 whitespace-pre-wrap">
-                {post.content}
-              </CardContent>
+              <CardContent 
+                className="p-0 text-lg leading-relaxed text-foreground/90 prose prose-sm sm:prose-base dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
+              />
             </Card>
 
             <Separator className="my-8" />
