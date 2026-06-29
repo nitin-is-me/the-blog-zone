@@ -88,7 +88,7 @@ If you are curious about what's powering this platform under the hood, here's th
 |4.1.0    | **27-Dec-2025** | Added profile section for users to see their (and other users) posts and comments. |
 |5.0.0    | **28-Jun-2026** | BIG UPDATE (My exams are almost over so I have some free time to improve this project): Replaced plain text areas with a powerful Rich Text Editor (Tiptap). Implemented direct image uploads using Supabase buckets with smart auto-cleanup logic. Integrated lightning-fast AI (`openai/gpt-oss-20b`) to help writers polish their drafts and readers summarize long posts. |
 |5.1.0    | **28-Jun-2026** | Added infinitely nested comments (replies) using an efficient Adjacency List model in PostgreSQL. I won't be adding much after this as it seems nearly complete, and I've to focus more on my other project, [TeamVault](https://github.com/nitin-is-me/TeamVault). |
-|5.2.0    | **29-Jun-2026** | Fixed the issue where the rich text editor toolbar was overlapped by mobile context menu when selecting text. |
+|5.1.1    | **29-Jun-2026** | Fixed the issue where the rich text editor toolbar was overlapped by mobile context menu when selecting text. |
 
 --------------
 ### Contribute to the project
