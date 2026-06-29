@@ -42,7 +42,7 @@ I ditched the plain old textareas and implemented a proper Rich Text Editor. You
 Sometimes you know what to say but don't know how to say it. I've integrated lightning-fast AI directly into the editor. Just highlight any text to instantly improve your writing, make it concise, simplify, or expand it! Also, if a post is too long, readers can click a single button to get a quick 3-bullet-point AI summary without reading the whole thing. 
 
 > [!NOTE]
-> I intentionally limited the AI to just these few specific actions instead of bombarding the application with AI features. I didn't want to make the platform overly AI-centric just for the hype—I only used it where it actually provides genuine value without taking away the human element of blogging.
+> I intentionally limited the AI to just these few specific actions instead of bombarding the application with AI features. I didn't want to make the platform overly AI-centric just for the hype. I only used it where it actually provides genuine value without taking away the human element of blogging.
 
 ### Infinitely Nested Comments
 Why stop at one layer? You can now reply directly to other comments on a post, creating deeply nested, threaded conversations that scale flawlessly.
@@ -88,6 +88,7 @@ If you are curious about what's powering this platform under the hood, here's th
 |4.1.0    | **27-Dec-2025** | Added profile section for users to see their (and other users) posts and comments. |
 |5.0.0    | **28-Jun-2026** | BIG UPDATE (My exams are almost over so I have some free time to improve this project): Replaced plain text areas with a powerful Rich Text Editor (Tiptap). Implemented direct image uploads using Supabase buckets with smart auto-cleanup logic. Integrated lightning-fast AI (`openai/gpt-oss-20b`) to help writers polish their drafts and readers summarize long posts. |
 |5.1.0    | **28-Jun-2026** | Added infinitely nested comments (replies) using an efficient Adjacency List model in PostgreSQL. I won't be adding much after this as it seems nearly complete, and I've to focus more on my other project, [TeamVault](https://github.com/nitin-is-me/TeamVault). |
+|5.2.0    | **29-Jun-2026** | Fixed the issue where the rich text editor toolbar was overlapped by mobile context menu when selecting text. |
 
 --------------
 ### Contribute to the project
