@@ -127,7 +127,7 @@ const MenuBar = ({ editor }) => {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-1 p-1 border border-b-0 rounded-t-md bg-muted/40">
+    <div className="flex flex-wrap items-center gap-1 p-1 border border-t-0 rounded-b-md bg-muted/40">
       <Button
         type="button"
         variant="ghost"
@@ -405,15 +405,15 @@ export default function RichTextEditor({ value, onChange }) {
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose-base dark:prose-invert focus:outline-none min-h-[300px] border rounded-b-md p-4 bg-background max-w-none',
+        class: 'prose prose-sm sm:prose-base dark:prose-invert focus:outline-none min-h-[300px] border rounded-t-md p-4 bg-background max-w-none',
       },
     },
   });
 
   return (
     <div className="w-full flex flex-col">
-      <MenuBar editor={editor} />
       <EditorContent editor={editor} />
+      <MenuBar editor={editor} />
     </div>
   );
 }
