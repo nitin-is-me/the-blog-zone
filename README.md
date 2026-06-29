@@ -1,4 +1,5 @@
-<img width="669" height="307" alt="image" src="https://github.com/user-attachments/assets/03776db3-e095-4a5d-b7bc-596b5a4192e5" />
+<img width="579" height="239" alt="image" src="https://github.com/user-attachments/assets/674b3bd5-6d2f-47b6-ad65-9c599c946d86" />
+
 
 ## The Blog zone
 The Blog Zone is your personal or public blogging platform without any posting rules. Post whatever you want, but try to maintain the dignity of the platform as much as possible. This repository is hosted directly on vercel, so the platform is completely transparent. <br>
