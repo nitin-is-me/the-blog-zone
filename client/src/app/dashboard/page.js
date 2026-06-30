@@ -66,6 +66,7 @@ export default function Dashboard() {
           setCurrentUser(response.data);
         } catch (error) {
           console.error("Failed to fetch user info:", error);
+          localStorage.removeItem("token");
         } finally {
           setUserLoading(false);
         }
@@ -253,7 +254,7 @@ export default function Dashboard() {
       <main className="max-w-7xl mx-auto p-4 sm:p-8">
         <div className="mb-10 text-center space-y-2">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl text-foreground">
-            Welcome back, {currentUser?.name?.split(" ")[0]}
+            {currentUser ? `Welcome back, ${currentUser.name.split(" ")[0]}` : "Welcome, Guest"}
           </h1>
           <p className="text-lg text-muted-foreground">
             Catch up on the latest stories or write your own.

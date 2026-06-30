@@ -39,6 +39,11 @@ exports.login = async (req, res) => {
     return res.status(400).send("Incorrect password");
   }
 
+  // Check if banned
+  if (user.isBanned) {
+    return res.status(403).send("Your account has been banned. Please contact admin to remove the ban.");
+  }
+
   // Generating JWT
   const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, {
     expiresIn: "365d",
@@ -47,7 +52,7 @@ exports.login = async (req, res) => {
   res.json({ token });
 };
 
-exports.verifyToken = (req, res) => {
+exports.verifyToken = async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
     return res.status(401).json({ message: "No token provided" });
@@ -55,19 +60,27 @@ exports.verifyToken = (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await Blogger.findOne({ where: { username: decoded.username } });
+    if (!user || user.isBanned) {
+      return res.status(403).json({ message: "User is banned or not found" });
+    }
     res.status(200).json({ message: "User is authorized", user: decoded });
   } catch (error) {
     res.status(401).json({ message: "Invalid token" });
   }
 };
 
-exports.user = (req, res) => {
+exports.user = async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) return res.status(401).json({ error: "Unauthorized" });
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await Blogger.findOne({ where: { username: decoded.username } });
+    if (!user || user.isBanned) {
+      return res.status(403).json({ error: "User is banned or not found" });
+    }
     res.json({ user: decoded });
   } catch {
     res.status(401).json({ error: "Unauthorized" });
@@ -92,7 +105,10 @@ exports.me = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-
+    
+    if (user.isBanned) {
+      return res.status(403).json({ error: "User is banned" });
+    }
 
     return res.json(user);
   } catch (error) {
@@ -135,8 +151,8 @@ exports.updateProfile = async (req, res) => {
     // Update user fields if provided
     if (name) user.name = name;
 
-    const newToken = jwt.sign({ 
-      id: decoded.id, 
+    const newToken = jwt.sign({
+      id: decoded.id,
       username: newUsername || user.username // Use new username if provided, otherwise keep current
     }, process.env.JWT_SECRET, {
       expiresIn: "365d",

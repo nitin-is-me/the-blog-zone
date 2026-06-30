@@ -71,7 +71,7 @@ export default function CreateBlogPage() {
       }
 
       const { html: processedContent, urlMap } = await processHtmlImages(content);
-      
+
       let finalThumbnail = selectedThumbnail;
       if (selectedThumbnail && urlMap[selectedThumbnail]) {
         finalThumbnail = urlMap[selectedThumbnail];

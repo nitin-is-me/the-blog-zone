@@ -65,6 +65,7 @@ export default function BlogPostPage() {
           setLoggedInUser(response.data);
         } catch (error) {
           console.error("Failed to fetch user data.");
+          localStorage.removeItem("token");
         }
       }
     };

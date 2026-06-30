@@ -48,6 +48,9 @@ Sometimes you know what to say but don't know how to say it. I've integrated lig
 ### Infinitely Nested Comments
 Why stop at one layer? You can now reply directly to other comments on a post, creating deeply nested, threaded conversations that scale flawlessly.
 
+### Complete Platform Moderation
+I've also built a fully isolated Admin Dashboard. I can now oversee all users on the platform, instantly ban/unban accounts to revoke their access, permanently delete accounts (with smart auto-cleanup of all their images), and remove inappropriate public posts.
+
 ## For nerds
 If you are curious about what's powering this platform under the hood, here's the deep dive:
 - **Frontend**: Built with Next.js (React), styled with Tailwind CSS, and using Shadcn/UI for component design. The editor uses Tiptap.
@@ -88,8 +91,9 @@ If you are curious about what's powering this platform under the hood, here's th
 |4.0.0    | **27-Dec-2025** | BIG UPDATE: changed UI by implementing shadcn/ui components to refine the site. I have kept the old ui in the 'old-ui' branch of this repository. You can check changed.md file for the changes made. |
 |4.1.0    | **27-Dec-2025** | Added profile section for users to see their (and other users) posts and comments. |
 |5.0.0    | **28-Jun-2026** | BIG UPDATE (My exams are almost over so I have some free time to improve this project): Replaced plain text areas with a powerful Rich Text Editor (Tiptap). Implemented direct image uploads using Supabase buckets with smart auto-cleanup logic. Integrated lightning-fast AI (`openai/gpt-oss-20b`) to help writers polish their drafts and readers summarize long posts. |
-|5.1.0    | **28-Jun-2026** | Added infinitely nested comments (replies) using an efficient Adjacency List model in PostgreSQL. The project seems nearly complete except I'll add optional email authentication and admin panel in future, but right now I've to focus on my other project, [TeamVault](https://github.com/nitin-is-me/TeamVault). |
+|5.1.0    | **28-Jun-2026** | Added infinitely nested comments (replies) using an efficient Adjacency List model in PostgreSQL. The project seems nearly complete except I'll add optional email authentication and admin panel in future after that, I'll just maintain it with minor changes and updates as I'll be busy with other projects. |
 |5.1.1    | **29-Jun-2026** | Fixed the issue where the rich text editor toolbar was overlapped by mobile context menu when selecting text. |
+|5.2.0    | **30-Jun-2026** | Added the Admin Panel! Now I can finally moderate the platform, ban users, and delete inappropriate content without writing manual SQL queries in the database. Fully isolated sessions so admin privileges don't mix with normal browsing. |
 
 --------------
 ### Contribute to the project

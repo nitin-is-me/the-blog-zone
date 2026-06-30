@@ -63,6 +63,7 @@ export default function PrivatePosts() {
           setCurrentUser(response.data);
         } catch (error) {
           console.error("Failed to fetch user info:", error);
+          localStorage.removeItem("token");
         }
       }
     };

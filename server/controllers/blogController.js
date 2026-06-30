@@ -431,3 +431,6 @@ exports.editBlog = async (req, res) => {
   }
 };
 
+exports.extractImageUrls = extractImageUrls;
+exports.deleteSupabaseImages = deleteSupabaseImages;
+

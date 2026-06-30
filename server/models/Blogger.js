@@ -20,6 +20,10 @@ const Blogger = sequelize.define("Blogger", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  isBanned: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,

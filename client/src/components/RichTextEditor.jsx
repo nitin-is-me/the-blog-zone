@@ -90,7 +90,7 @@ const MenuBar = ({ editor }) => {
 
     const blobUrl = URL.createObjectURL(file);
     editor.chain().focus().setImage({ src: blobUrl }).run();
-    
+
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
