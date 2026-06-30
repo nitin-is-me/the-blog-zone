@@ -71,11 +71,11 @@ export default function LoginPage() {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">Username or Email</Label>
               <Input
                 id="username"
                 type="text"
-                placeholder="johndoe"
+                placeholder="johndoe or you@example.com"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -131,8 +131,11 @@ export default function LoginPage() {
               Sign Up
             </Link>
           </div>
-          <div className="text-xs text-center text-muted-foreground">
-            Forgot your password? Since this is an anonymous platform, please contact the <a className="text-primary hover:underline" href="mailto:nitinjha2609@gmail.com">admin</a> for recovery.
+          <div className="text-sm text-center text-muted-foreground">
+            Forgot your password?{" "}
+            <Link href="/forgot-password" className="font-semibold text-primary hover:underline underline-offset-4">
+              Reset it here
+            </Link>
           </div>
         </CardFooter>
       </Card>

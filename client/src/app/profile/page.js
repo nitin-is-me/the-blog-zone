@@ -27,6 +27,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ModeToggle } from "@/components/mode-toggle";
@@ -46,6 +53,12 @@ export default function Profile() {
   const [passwordError, setPasswordError] = useState("");
   const [usernameError, setUsernameError] = useState("");
 
+  // Email OTP state
+  const [showEmailOtpDialog, setShowEmailOtpDialog] = useState(false);
+  const [emailOtp, setEmailOtp] = useState("");
+  const [emailToken, setEmailToken] = useState("");
+  const [emailOtpLoading, setEmailOtpLoading] = useState(false);
+
   // new state for tabs
   const [myPosts, setMyPosts] = useState([]);
   const [myComments, setMyComments] = useState([]);
@@ -57,6 +70,7 @@ export default function Profile() {
     name: "",
     username: "",
     newUsername: "",
+    email: "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -84,6 +98,7 @@ export default function Profile() {
           name: userData.name || "",
           username: userData.username || "",
           newUsername: userData.username || "",
+          email: userData.email || "",
           newPassword: "",
           confirmPassword: "",
           currentPassword: ""
@@ -260,8 +275,21 @@ export default function Profile() {
         newUsername: updatedUser.username
       }));
 
-      setSuccess("Profile updated successfully!");
-      toast.success("Profile updated successfully!");
+      if (formData.email !== (currentUser.email || "")) {
+        // Request OTP for new email
+        const otpResponse = await axios.post(
+          "https://the-blog-zone-server.vercel.app/api/auth/request-email-update",
+          { newEmail: formData.email.trim() },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setEmailToken(otpResponse.data.emailToken);
+        setShowEmailOtpDialog(true);
+        setSuccess("Profile updated! Please check your new email for verification OTP.");
+        toast.success("Profile updated! Verification OTP sent.");
+      } else {
+        setSuccess("Profile updated successfully!");
+        toast.success("Profile updated successfully!");
+      }
 
     } catch (error) {
       console.error("Failed to update profile:", error);
@@ -275,6 +303,31 @@ export default function Profile() {
       }
     } finally {
       setUpdating(false);
+    }
+  };
+
+  const handleVerifyEmail = async () => {
+    setEmailOtpLoading(true);
+    let token = localStorage.getItem("token");
+    try {
+      const res = await axios.post(
+        "https://the-blog-zone-server.vercel.app/api/auth/verify-email-update",
+        { otp: emailOtp, emailToken },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const updatedUser = { ...currentUser, email: res.data.email };
+      setCurrentUser(updatedUser);
+      setFormData(prev => ({ ...prev, email: res.data.email }));
+
+      setShowEmailOtpDialog(false);
+      setEmailOtp("");
+      toast.success("Email successfully linked!");
+    } catch (error) {
+      console.error("Failed to verify email:", error);
+      toast.error(error.response?.data?.error || "Failed to verify email");
+    } finally {
+      setEmailOtpLoading(false);
     }
   };
 
@@ -387,6 +440,36 @@ export default function Profile() {
           </div>
         </div>
       </header>
+
+      {/* Email OTP Verification Modal */}
+      <Dialog open={showEmailOtpDialog} onOpenChange={setShowEmailOtpDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Verify your New Email</DialogTitle>
+            <DialogDescription>
+              We've sent a 6-digit OTP to <strong>{formData.email}</strong>.
+              Please enter it below to verify and link this email.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="my-4 space-y-2">
+            <Label htmlFor="emailOtp">6-Digit Code</Label>
+            <Input
+              id="emailOtp"
+              value={emailOtp}
+              onChange={(e) => setEmailOtp(e.target.value)}
+              placeholder="123456"
+              maxLength={6}
+              className="text-center tracking-widest text-lg"
+            />
+          </div>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button variant="outline" onClick={() => setEmailOtp("")}>Cancel</Button>
+            <Button onClick={handleVerifyEmail} disabled={emailOtpLoading || emailOtp.length < 6}>
+              {emailOtpLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Verify Email"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <main className="flex-1 max-w-4xl mx-auto w-full p-4 sm:p-6 space-y-8">
         <Card className="border-none shadow-md bg-card/50">
@@ -551,6 +634,21 @@ export default function Profile() {
                         )}
                         <p className="text-xs text-muted-foreground">
                           Current username: {currentUser?.username}
+                        </p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email Address (Optional)</Label>
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          placeholder="you@example.com"
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          Recommended for password recovery
                         </p>
                       </div>
                     </form>

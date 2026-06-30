@@ -5,9 +5,16 @@
 The Blog Zone is your personal or public blogging platform without any posting rules. Post whatever you want, but try to maintain the dignity of the platform as much as possible. This repository is hosted directly on vercel, so the platform is completely transparent. <br>
 > **The Project is live <a href="https://the-blog-zone.vercel.app">here</a>**
 
+> [!IMPORTANT]
+> **Project Status: Feature Complete & Maintenance Mode**
+> The Blog Zone has officially reached its feature-complete milestone! I will now be shifting my primary focus to other projects, meaning this repository will mainly receive minor maintenance and security updates. However, the project remains open-source, and if anyone would like to contribute improvements or new features, you are most welcome!
+
 ## Features
 ### Account creation
 You don't need email or any type of identity to signup, just create a username, enter a strong password and you're done.
+
+### Email Authentication & Password Recovery
+While not required (because I respect users who don't want to link emails to their accounts for anonymity), **it is highly recommended** to link an email address to your account from your Profile Settings. Adding an email activates our secure 6-digit OTP verification flow. This not only allows you to log in seamlessly using your email address, but more importantly, gives you access to the fully integrated "Forgot Password" flow to recover your account if you ever get locked out!
 ### Post Privacy
 You are given a choice whether you want to make your post publicly visible, or make it private so it's only visible to the you.
 ### Wanna make changes or remove post?
@@ -94,7 +101,5 @@ If you are curious about what's powering this platform under the hood, here's th
 |5.1.0    | **28-Jun-2026** | Added infinitely nested comments (replies) using an efficient Adjacency List model in PostgreSQL. The project seems nearly complete except I'll add optional email authentication and admin panel in future after that, I'll just maintain it with minor changes and updates as I'll be busy with other projects. |
 |5.1.1    | **29-Jun-2026** | Fixed the issue where the rich text editor toolbar was overlapped by mobile context menu when selecting text. |
 |5.2.0    | **30-Jun-2026** | Added the Admin Panel! Now I can finally moderate the platform, ban users, and delete inappropriate content without writing manual SQL queries in the database. Fully isolated sessions so admin privileges don't mix with normal browsing. |
+|6.0.0    | **30-Jun-2026** | **The Final Major Update**: Added Email Authentication and Password Recovery. Users can now securely link an email to their account via 6-digit OTP, log in using their email, and use the "Forgot Password" feature to reset their credentials. The platform is now officially feature-complete! |
 
---------------
-### Contribute to the project
-The Blog Zone is an open source project, hence it welcomes all improvements from anyone interested. New features will be coming soon, thanks!

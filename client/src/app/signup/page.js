@@ -21,6 +21,7 @@ export default function SignupPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -53,6 +54,7 @@ export default function SignupPage() {
         username,
         name: trimmedName,
         password,
+        email: email.trim() || undefined,
       });
 
       if (response.status === 201 && response.data.token) {
@@ -139,6 +141,19 @@ export default function SignupPage() {
               {usernameError && (
                 <p className="text-sm text-red-500">{usernameError}</p>
               )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address (Optional)</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
+              />
+              <p className="text-xs text-muted-foreground">Recommended for password recovery</p>
             </div>
 
             <div className="space-y-2">

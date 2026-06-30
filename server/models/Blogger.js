@@ -20,6 +20,19 @@ const Blogger = sequelize.define("Blogger", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  email: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: true,
+  },
+  resetOtp: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  resetOtpExpiry: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
   isBanned: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
