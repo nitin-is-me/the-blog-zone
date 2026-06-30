@@ -1,12 +1,10 @@
-<img width="579" height="239" alt="image" src="https://github.com/user-attachments/assets/674b3bd5-6d2f-47b6-ad65-9c599c946d86" />
-
-
 ## The Blog zone
 The Blog Zone is your personal or public blogging platform without any posting rules. Post whatever you want, but try to maintain the dignity of the platform as much as possible. This repository is hosted directly on vercel, so the platform is completely transparent. <br>
 > **The Project is live <a href="https://the-blog-zone.vercel.app">here</a>**
 
 > [!IMPORTANT]
 > **Project Status: Feature Complete & Maintenance Mode**
+> 
 > The Blog Zone has officially reached its feature-complete milestone! I will now be shifting my primary focus to other projects, meaning this repository will mainly receive minor maintenance and security updates. However, the project remains open-source, and if anyone would like to contribute improvements or new features, you are most welcome!
 
 ## Features
@@ -103,3 +101,51 @@ If you are curious about what's powering this platform under the hood, here's th
 |5.2.0    | **30-Jun-2026** | Added the Admin Panel! Now I can finally moderate the platform, ban users, and delete inappropriate content without writing manual SQL queries in the database. Fully isolated sessions so admin privileges don't mix with normal browsing. |
 |6.0.0    | **30-Jun-2026** | **The Final Major Update**: Added Email Authentication and Password Recovery. Users can now securely link an email to their account via 6-digit OTP, log in using their email, and use the "Forgot Password" feature to reset their credentials. The platform is now officially feature-complete! |
 
+## Screenshots
+
+### Landing Page
+<img width="1280" height="606" alt="Landing Page" src="https://github.com/user-attachments/assets/46054b3c-0154-4649-a19c-a1cb4124455b" />
+
+Modern landing page introducing **The Blog Zone**, featuring a clean dark-themed interface, project branding, and quick access to the blogging dashboard for authenticated users.
+
+---
+
+### Dashboard
+<img width="1280" height="612" alt="Dashboard" src="https://github.com/user-attachments/assets/f758ab9b-68d8-4a7e-af71-9581fefe3655" />
+
+The central workspace for browsing articles, managing blog posts, searching content, and accessing public or private blogging features.
+
+---
+
+### Private Dashboard
+<img width="1280" height="612" alt="Private Dashboard" src="https://github.com/user-attachments/assets/f3f360f8-9527-4104-81ca-b73d59254f85" />
+
+Dedicated workspace for encrypted private posts. Only the author can decrypt and access their content, ensuring privacy through server-side AES encryption.
+
+---
+
+### Create Blog
+<img width="1280" height="612" alt="Create Blog" src="https://github.com/user-attachments/assets/4eee9f9c-4767-4c4b-961f-e163ed6859e4" />
+
+Feature-rich editor powered by **Tiptap** with rich text formatting, image uploads, AI-assisted writing, and support for both public and encrypted private posts.
+
+---
+
+### Blog Post & Discussions
+<img width="1280" height="612" alt="Blog Post & Discussions" src="https://github.com/user-attachments/assets/9ca05db2-5626-4440-a8fb-4ae14cc61573" />
+
+Individual post page featuring rich text rendering, AI-generated summaries, and infinitely nested discussions for engaging conversations.
+
+---
+
+### Profile & Settings
+<img width="1349" height="647" alt="image" src="https://github.com/user-attachments/assets/1816d579-d9bb-49a5-8f81-5dab0d38aa5d" />
+
+Centralized profile page where users can manage posts, review discussion history, update account settings, and link an email for secure account recovery.
+
+---
+
+### Admin Dashboard
+<img width="1280" height="606" alt="Admin Dashboard" src="https://github.com/user-attachments/assets/bc6a079a-6ef1-4734-92cc-d8832b2da2ce" />
+
+A dedicated administration portal secured with isolated JWT authentication, providing user moderation, account banning, searchable content management, permanent account deletion with automatic image cleanup, and one-click removal of inappropriate public posts.
