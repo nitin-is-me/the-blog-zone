@@ -9,7 +9,7 @@ const BlogPost = sequelize.define("BlogPost", {
     primaryKey: true
   },
   title: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   content: {
@@ -21,7 +21,7 @@ const BlogPost = sequelize.define("BlogPost", {
     defaultValue: false,
   },
   thumbnail: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: true,
   },
   createdAt: {

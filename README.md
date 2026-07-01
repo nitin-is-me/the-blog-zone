@@ -99,6 +99,7 @@ If you are curious about what's powering this platform under the hood, here's th
 |5.1.0    | **28-Jun-2026** | Added infinitely nested comments (replies) using an efficient Adjacency List model in PostgreSQL. The project seems nearly complete except I'll add optional email authentication and admin panel in future after that, I'll just maintain it with minor changes and updates as I'll be busy with other projects. |
 |5.1.1    | **29-Jun-2026** | Fixed the issue where the rich text editor toolbar was overlapped by mobile context menu when selecting text. |
 |6.0.0    | **30-Jun-2026** | **The Final Major Update**: Added an Admin Panel for moderation (ban users, delete inappropriate content) plus Email Authentication and Password Recovery. Users can now verify emails with a 6-digit OTP, sign in with email, and reset passwords via "Forgot Password." The platform is now officially feature-complete! |
+|6.0.1    | **01-Jul-2026** | Bug fix: Private post couldn't be saved with images because the encrypted URL was crossing limit of defined length. |
 
 ## Screenshots
 
