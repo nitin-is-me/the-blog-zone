@@ -201,7 +201,7 @@ export default function BlogPostPage() {
 
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/blog/${id}`);
+        const response = await axios.get(`https://the-blog-zone-server.vercel.app/api/blog/${id}`);
         setPost(response.data);
         setComments(response.data.Comments || []);
       } catch (error) {
@@ -216,7 +216,7 @@ export default function BlogPostPage() {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await axios.get("http://localhost:8000/api/auth/me", {
+          const response = await axios.get("https://the-blog-zone-server.vercel.app/api/auth/me", {
             headers: { Authorization: `Bearer ${token}` },
           });
           setLoggedInUser(response.data);
@@ -248,7 +248,7 @@ export default function BlogPostPage() {
     setSummaryError("");
     try {
       const strippedContent = stripHtml(post.content);
-      const response = await axios.post("http://localhost:8000/api/ai/summarize", {
+      const response = await axios.post("https://the-blog-zone-server.vercel.app/api/ai/summarize", {
         content: strippedContent
       });
       setSummary(response.data.summary);
@@ -268,14 +268,14 @@ export default function BlogPostPage() {
         throw new Error("Unauthorized");
       }
       await axios.post(
-        `http://localhost:8000/api/blog/${id}/comments`,
+        `https://the-blog-zone-server.vercel.app/api/blog/${id}/comments`,
         { content, parentId },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       // Fetch updated comments
-      const commentResponse = await axios.get(`http://localhost:8000/api/blog/${id}`);
+      const commentResponse = await axios.get(`https://the-blog-zone-server.vercel.app/api/blog/${id}`);
       setComments(commentResponse.data.Comments || []);
       toast.success(parentId ? "Reply posted!" : "Comment posted!");
     } catch (error) {
@@ -310,7 +310,7 @@ export default function BlogPostPage() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:8000/api/blog/comment/${commentId}`, {
+      await axios.delete(`https://the-blog-zone-server.vercel.app/api/blog/comment/${commentId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -376,16 +376,16 @@ export default function BlogPostPage() {
 
               {!summary && (
                 <div className="flex justify-center sm:justify-start mt-6">
-                  <Button 
+                  <Button
                     onClick={() => {
                       if (!loggedInUser || !loggedInUser.isWarningSuppressed) {
                         setIsPrivacyWarningOpen(true);
                       } else {
                         handleSummarize();
                       }
-                    }} 
-                    disabled={isSummarizing} 
-                    variant="outline" 
+                    }}
+                    disabled={isSummarizing}
+                    variant="outline"
                     className="gap-2 border-indigo-200 hover:bg-indigo-50 dark:border-indigo-800 dark:hover:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 transition-all"
                   >
                     {isSummarizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
@@ -478,8 +478,8 @@ export default function BlogPostPage() {
           </article>
         )}
       </div>
-      <AiWarningDialog 
-        open={isPrivacyWarningOpen} 
+      <AiWarningDialog
+        open={isPrivacyWarningOpen}
         onOpenChange={setIsPrivacyWarningOpen}
         onConfirm={() => {
           if (loggedInUser) {

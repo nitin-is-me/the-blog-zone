@@ -20,7 +20,7 @@ export default function AdminLogin() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8000/api/admin/login', { password });
+      const response = await axios.post('https://the-blog-zone-server.vercel.app/api/admin/login', { password });
 
       // We store the admin token specifically so it doesn't collide with the normal user token
       localStorage.setItem('adminToken', response.data.token);

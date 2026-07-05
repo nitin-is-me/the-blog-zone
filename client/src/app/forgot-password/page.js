@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:8000/api/auth/forgot-password", { identifier });
+      const res = await axios.post("https://the-blog-zone-server.vercel.app/api/auth/forgot-password", { identifier });
       setEmailToDisplay(res.data.email);
       setSuccess(res.data.message);
       setStep(2);
@@ -62,7 +62,7 @@ export default function ForgotPasswordPage() {
     setSuccess("");
 
     try {
-      const res = await axios.post("http://localhost:8000/api/auth/verify-otp", { email: emailToDisplay, otp });
+      const res = await axios.post("https://the-blog-zone-server.vercel.app/api/auth/verify-otp", { email: emailToDisplay, otp });
       setResetToken(res.data.resetToken);
       setSuccess("OTP verified successfully");
       setStep(3);
@@ -92,7 +92,7 @@ export default function ForgotPasswordPage() {
     }
 
     try {
-      await axios.post("http://localhost:8000/api/auth/reset-password", { resetToken, newPassword });
+      await axios.post("https://the-blog-zone-server.vercel.app/api/auth/reset-password", { resetToken, newPassword });
       setSuccess("Password reset successfully! Redirecting to login...");
       setTimeout(() => {
         router.push("/login");

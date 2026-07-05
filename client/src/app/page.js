@@ -24,7 +24,7 @@ export default function Home() {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await axios.get("http://localhost:8000/api/auth/verifyToken", {
+          const response = await axios.get("https://the-blog-zone-server.vercel.app/api/auth/verifyToken", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -81,10 +81,10 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 hover:border-primary/30 transition-colors cursor-pointer"
               >
-                Version 6.0.1
+                Version 6.0.2
               </a>
               <CardDescription className="text-xl text-muted-foreground max-w-lg mx-auto pt-3">
-                Dive into a world of creativity, ideas, and stories. Share yours or explore what others have to say.
+                Dive into a world of creativity, ideas, and stories. Share yours or explore what others have to say on a platform that puts your privacy first.
               </CardDescription>
             </CardHeader>
 

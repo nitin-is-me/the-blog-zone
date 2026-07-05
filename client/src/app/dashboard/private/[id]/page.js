@@ -39,7 +39,7 @@ export default function BlogPostPage() {
         return;
       }
       try {
-        const response = await axios.get(`http://localhost:8000/api/blog/${id}`, {
+        const response = await axios.get(`https://the-blog-zone-server.vercel.app/api/blog/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -59,7 +59,7 @@ export default function BlogPostPage() {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await axios.get("http://localhost:8000/api/auth/me", {
+          const response = await axios.get("https://the-blog-zone-server.vercel.app/api/auth/me", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -86,7 +86,7 @@ export default function BlogPostPage() {
     setSummaryError("");
     try {
       const strippedContent = stripHtml(post.content);
-      const response = await axios.post("http://localhost:8000/api/ai/summarize", {
+      const response = await axios.post("https://the-blog-zone-server.vercel.app/api/ai/summarize", {
         content: strippedContent
       });
       setSummary(response.data.summary);
@@ -152,16 +152,16 @@ export default function BlogPostPage() {
 
               {!summary && (
                 <div className="flex justify-center sm:justify-start mt-6">
-                  <Button 
+                  <Button
                     onClick={() => {
                       if (!loggedInUser || !loggedInUser.isWarningSuppressed) {
                         setIsPrivacyWarningOpen(true);
                       } else {
                         handleSummarize();
                       }
-                    }} 
-                    disabled={isSummarizing} 
-                    variant="outline" 
+                    }}
+                    disabled={isSummarizing}
+                    variant="outline"
                     className="gap-2 border-indigo-200 hover:bg-indigo-50 dark:border-indigo-800 dark:hover:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 transition-all"
                   >
                     {isSummarizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
@@ -205,8 +205,8 @@ export default function BlogPostPage() {
           </article>
         )}
       </div>
-      <AiWarningDialog 
-        open={isPrivacyWarningOpen} 
+      <AiWarningDialog
+        open={isPrivacyWarningOpen}
         onOpenChange={setIsPrivacyWarningOpen}
         onConfirm={() => {
           if (loggedInUser) {

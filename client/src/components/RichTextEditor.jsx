@@ -44,7 +44,7 @@ const MenuBar = ({ editor }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      axios.get('http://localhost:8000/api/auth/me', { headers: { Authorization: `Bearer ${token}` } })
+      axios.get('https://the-blog-zone-server.vercel.app/api/auth/me', { headers: { Authorization: `Bearer ${token}` } })
         .then(res => setIsWarningSuppressed(res.data.isWarningSuppressed))
         .catch(err => console.error("Failed to check privacy preference"));
     }
@@ -122,7 +122,7 @@ const MenuBar = ({ editor }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:8000/api/ai/improve-text',
+        'https://the-blog-zone-server.vercel.app/api/ai/improve-text',
         { text, prompt: aiPrompt },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -301,8 +301,8 @@ const MenuBar = ({ editor }) => {
         AI
       </Button>
 
-      <AiWarningDialog 
-        open={isPrivacyWarningOpen} 
+      <AiWarningDialog
+        open={isPrivacyWarningOpen}
         onOpenChange={setIsPrivacyWarningOpen}
         onConfirm={() => {
           setIsWarningSuppressed(true);

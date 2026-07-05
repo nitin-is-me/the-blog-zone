@@ -55,7 +55,7 @@ export default function PrivatePosts() {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await axios.get("http://localhost:8000/api/auth/me", {
+          const response = await axios.get("https://the-blog-zone-server.vercel.app/api/auth/me", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -77,7 +77,7 @@ export default function PrivatePosts() {
         return;
       }
       try {
-        const response = await axios.get("http://localhost:8000/api/blog/blogs/private", {
+        const response = await axios.get("https://the-blog-zone-server.vercel.app/api/blog/blogs/private", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -136,7 +136,7 @@ export default function PrivatePosts() {
     setDeletingPostId(postId);
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`http://localhost:8000/api/blog/delete/${postId}`, {
+      await axios.delete(`https://the-blog-zone-server.vercel.app/api/blog/delete/${postId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

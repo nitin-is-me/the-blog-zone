@@ -50,7 +50,7 @@ export default function SignupPage() {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:8000/api/auth/signup", {
+      const response = await axios.post("https://the-blog-zone-server.vercel.app/api/auth/signup", {
         username,
         name: trimmedName,
         password,

@@ -88,7 +88,7 @@ export default function Profile() {
 
       try {
         // fetching user data
-        const userResponse = await axios.get("http://localhost:8000/api/auth/me", {
+        const userResponse = await axios.get("https://the-blog-zone-server.vercel.app/api/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -106,7 +106,7 @@ export default function Profile() {
 
         // fetching all posts to filter my content cuz i haven't created an endpoint for it yet
         setContentLoading(true);
-        const postsResponse = await axios.get("http://localhost:8000/api/blog");
+        const postsResponse = await axios.get("https://the-blog-zone-server.vercel.app/api/blog");
         const allPosts = postsResponse.data;
 
         // filter my posts (deduplicated)
@@ -246,7 +246,7 @@ export default function Profile() {
       }
 
       const response = await axios.put(
-        "http://localhost:8000/api/auth/updateProfile",
+        "https://the-blog-zone-server.vercel.app/api/auth/updateProfile",
         payload,
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -278,7 +278,7 @@ export default function Profile() {
       if (formData.email !== (currentUser.email || "")) {
         // Request OTP for new email
         const otpResponse = await axios.post(
-          "http://localhost:8000/api/auth/request-email-update",
+          "https://the-blog-zone-server.vercel.app/api/auth/request-email-update",
           { newEmail: formData.email.trim() },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -311,7 +311,7 @@ export default function Profile() {
     let token = localStorage.getItem("token");
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/auth/verify-email-update",
+        "https://the-blog-zone-server.vercel.app/api/auth/verify-email-update",
         { otp: emailOtp, emailToken },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -353,7 +353,7 @@ export default function Profile() {
     const token = localStorage.getItem("token");
     try {
       await axios.put(
-        "http://localhost:8000/api/auth/changePassword",
+        "https://the-blog-zone-server.vercel.app/api/auth/changePassword",
         {
           newPassword: formData.newPassword
         },

@@ -78,7 +78,7 @@ export default function CreateBlogPage() {
       }
 
       await axios.post(
-        'http://localhost:8000/api/blog/create',
+        'https://the-blog-zone-server.vercel.app/api/blog/create',
         { title, content: processedContent, private: isPrivate, thumbnail: finalThumbnail },
         {
           headers: {

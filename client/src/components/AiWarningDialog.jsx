@@ -24,7 +24,7 @@ export function AiWarningDialog({ open, onOpenChange, onConfirm }) {
       const token = localStorage.getItem("token");
       try {
         await axios.post(
-          "http://localhost:8000/api/auth/suppress-warning",
+          "https://the-blog-zone-server.vercel.app/api/auth/suppress-warning",
           {},
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -39,7 +39,7 @@ export function AiWarningDialog({ open, onOpenChange, onConfirm }) {
       }
       setIsSubmitting(false);
     }
-    
+
     onOpenChange(false);
     onConfirm();
   };
@@ -53,18 +53,18 @@ export function AiWarningDialog({ open, onOpenChange, onConfirm }) {
             Privacy Notice
           </DialogTitle>
           <DialogDescription className="pt-2">
-            This feature uses an external AI service to process your text. 
+            This feature uses an external AI service to process your text.
             <strong> Please do not use this feature for highly confidential, secure, or private posts.</strong>
             <br /><br />
             Are you sure you want to proceed?
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="flex items-center space-x-2 py-4">
-          <Checkbox 
-            id="suppress" 
-            checked={suppress} 
-            onCheckedChange={setSuppress} 
+          <Checkbox
+            id="suppress"
+            checked={suppress}
+            onCheckedChange={setSuppress}
             disabled={isSubmitting}
           />
           <Label htmlFor="suppress" className="text-sm cursor-pointer">
@@ -73,16 +73,16 @@ export function AiWarningDialog({ open, onOpenChange, onConfirm }) {
         </div>
 
         <DialogFooter className="sm:justify-end gap-2">
-          <Button 
-            type="button" 
-            variant="outline" 
+          <Button
+            type="button"
+            variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isSubmitting}
           >
             Cancel
           </Button>
-          <Button 
-            type="button" 
+          <Button
+            type="button"
             onClick={handleConfirm}
             disabled={isSubmitting}
             className="bg-amber-600 hover:bg-amber-700 text-white"
