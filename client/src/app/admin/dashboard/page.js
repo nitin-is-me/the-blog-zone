@@ -36,8 +36,8 @@ export default function AdminDashboard() {
 
     try {
       const [usersRes, postsRes] = await Promise.all([
-        axios.get('https://the-blog-zone-server.vercel.app/api/admin/users', { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get('https://the-blog-zone-server.vercel.app/api/admin/posts', { headers: { Authorization: `Bearer ${token}` } })
+        axios.get('http://localhost:8000/api/admin/users', { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get('http://localhost:8000/api/admin/posts', { headers: { Authorization: `Bearer ${token}` } })
       ]);
       setUsers(usersRes.data);
       setPosts(postsRes.data);
@@ -57,7 +57,7 @@ export default function AdminDashboard() {
   const handleToggleBan = async (userId) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await axios.put(`https://the-blog-zone-server.vercel.app/api/admin/users/${userId}/ban`, {}, {
+      const res = await axios.put(`http://localhost:8000/api/admin/users/${userId}/ban`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success(res.data.message);
@@ -71,7 +71,7 @@ export default function AdminDashboard() {
     if (!confirm('Are you sure you want to permanently delete this user and ALL their posts?')) return;
     try {
       const token = localStorage.getItem('adminToken');
-      await axios.delete(`https://the-blog-zone-server.vercel.app/api/admin/users/${userId}`, {
+      await axios.delete(`http://localhost:8000/api/admin/users/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success('User deleted successfully');
@@ -86,7 +86,7 @@ export default function AdminDashboard() {
     if (!confirm('Are you sure you want to permanently delete this post?')) return;
     try {
       const token = localStorage.getItem('adminToken');
-      await axios.delete(`https://the-blog-zone-server.vercel.app/api/admin/posts/${postId}`, {
+      await axios.delete(`http://localhost:8000/api/admin/posts/${postId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success('Post deleted successfully');

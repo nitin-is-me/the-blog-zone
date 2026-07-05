@@ -1,5 +1,5 @@
 ## The Blog zone
-The Blog Zone is your personal or public blogging platform without any posting rules. Post whatever you want, but try to maintain the dignity of the platform as much as possible. This repository is hosted directly on vercel, so the platform is completely transparent. <br>
+The Blog Zone is your **privacy-first**, personal or public blogging platform without any posting rules. Post whatever you want, but try to maintain the dignity of the platform as much as possible. This repository is hosted directly on vercel, so the platform is completely transparent. <br>
 > **The Project is live <a href="https://the-blog-zone.vercel.app">here</a>**
 
 > [!IMPORTANT]
@@ -9,14 +9,17 @@ The Blog Zone is your personal or public blogging platform without any posting r
 
 ## Features
 ### Account creation
-You don't need email or any type of identity to signup, just create a username, enter a strong password and you're done.
+You don't need an email or any type of real-world identity to signup, ensuring **complete anonymity**. Just create a username, enter a strong password and you're done.
 
 ### Email Authentication & Password Recovery
 While not required (because I respect users who don't want to link emails to their accounts for anonymity), **it is highly recommended** to link an email address to your account from your Profile Settings. Adding an email activates our secure 6-digit OTP verification flow. This not only allows you to log in seamlessly using your email address, but more importantly, gives you access to the fully integrated "Forgot Password" flow to recover your account if you ever get locked out!
+
 ### Post Privacy
-You are given a choice whether you want to make your post publicly visible, or make it private so it's only visible to the you.
+**Privacy is the core philosophy of this platform.** You are given a choice whether you want to make your post publicly visible to the world, or make it completely private so it's only visible to you.
+
 ### Wanna make changes or remove post?
 You can edit the post anytime, and for privacy I haven't added the "updatedAt" visibility. Don't like the post? Delete it anytime (I added confirmation prompt later for deletion functions).
+
 ### Exact date and time of post
 Unlike many social medias where post is in "<time> ago" format, you'll see exact date and time of your post. (I implemented "<time> ago" format before, but exact time is more practical).
 
@@ -27,7 +30,7 @@ You can comment on a post to tell what you feel about the post, and can delete i
 You can change your display name, username (this part was really tough) and password by clicking on the top left icon on dashboard page. Spaces in password and username are not allowed from now.
 
 ### Private posts will be encrypted
-Your private posts are completely safe. Both title and content will be securely encrypted before saving, and they'll only decrypt if the author himself is trying to access the post. Editing the private post will replace those characters with different random ones (example below). If you choose to make a private post public, then it'll decrypt the post permanently and add to public posts. Downside: Now you can't share private posts with URL to anyone, because they aren't the author of the post so their will be error while decryption.
+Your private posts are **protected with military-grade AES encryption**. Both the title and content will be securely encrypted on the server before saving to the database, ensuring that **not even the database administrators** can read your content. They'll only decrypt if the original author themselves is trying to access the post. Editing the private post will replace those characters with different random ones (example below). If you choose to make a private post public, then it'll decrypt the post permanently and add to public posts. Downside: Now you can't share private posts with URL to anyone, because they aren't the author of the post so there will be an error while decryption.
 
 #### Database Representation
 This is how public posts appear in the database:
@@ -48,7 +51,7 @@ I ditched the plain old textareas and implemented a proper Rich Text Editor. You
 Sometimes you know what to say but don't know how to say it. I've integrated lightning-fast AI directly into the editor. Just highlight any text to instantly improve your writing, make it concise, simplify, or expand it! Also, if a post is too long, readers can click a single button to get a quick 3-bullet-point AI summary without reading the whole thing. 
 
 > [!NOTE]
-> I intentionally limited the AI to just these few specific actions instead of bombarding the application with AI features. I didn't want to make the platform overly AI-centric just for the hype. I only used it where it actually provides genuine value without taking away the human element of blogging.
+> **Privacy First**: Because I value user privacy just as much as freedom, any time you use an AI feature for the first time, you will receive a transparent warning popup notifying you that the text is being sent to an external AI service. You are actively advised against using the AI for highly confidential or secure private posts. You can choose to permanently suppress this warning if you acknowledge the risk. Furthermore, I intentionally limited the AI to just a few specific actions instead of bombarding the application with AI features. I only used it where it actually provides genuine value without taking away the human element of blogging.
 
 ### Infinitely Nested Comments
 Why stop at one layer? You can now reply directly to other comments on a post, creating deeply nested, threaded conversations that scale flawlessly.
@@ -100,6 +103,7 @@ If you are curious about what's powering this platform under the hood, here's th
 |5.1.1    | **29-Jun-2026** | Fixed the issue where the rich text editor toolbar was overlapped by mobile context menu when selecting text. |
 |6.0.0    | **30-Jun-2026** | **The Final Major Update**: Added an Admin Panel for moderation (ban users, delete inappropriate content) plus Email Authentication and Password Recovery. Users can now verify emails with a 6-digit OTP, sign in with email, and reset passwords via "Forgot Password." The platform is now officially feature-complete! |
 |6.0.1    | **01-Jul-2026** | Bug fix: Private post couldn't be saved with images because the encrypted URL was crossing limit of defined length. |
+|6.0.2    | **05-Jul-2026** | Added an AI Privacy Warning popup. Users are now transparently warned before their text is sent to the external AI service for editing/summarization, advising against using it for highly confidential private posts. Users can opt to permanently hide this warning. |
 
 ## Screenshots
 

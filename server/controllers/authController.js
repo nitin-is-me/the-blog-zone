@@ -83,6 +83,21 @@ exports.verifyToken = async (req, res) => {
   }
 };
 
+exports.suppressWarning = async (req, res) => {
+  try {
+    const user = await Blogger.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    user.isWarningSuppressed = true;
+    await user.save();
+    res.json(user);
+  } catch (error) {
+    console.error("Error suppressing warning:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 exports.user = async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
 

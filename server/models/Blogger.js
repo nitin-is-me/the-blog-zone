@@ -41,6 +41,10 @@ const Blogger = sequelize.define("Blogger", {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
+  isWarningSuppressed: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 module.exports = Blogger;

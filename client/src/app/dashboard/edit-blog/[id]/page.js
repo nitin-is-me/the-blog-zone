@@ -45,7 +45,7 @@ export default function EditBlogPage() {
       }
 
       try {
-        const response = await axios.get(`https://the-blog-zone-server.vercel.app/api/blog/${id}`, {
+        const response = await axios.get(`http://localhost:8000/api/blog/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -115,7 +115,7 @@ export default function EditBlogPage() {
       }
 
       await axios.put(
-        `https://the-blog-zone-server.vercel.app/api/blog/edit/${id}`,
+        `http://localhost:8000/api/blog/edit/${id}`,
         { title, content: processedContent, private: isPrivate, thumbnail: finalThumbnail },
         {
           headers: {

@@ -60,7 +60,7 @@ export default function Dashboard() {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await axios.get("https://the-blog-zone-server.vercel.app/api/auth/me", {
+          const response = await axios.get("http://localhost:8000/api/auth/me", {
             headers: { Authorization: `Bearer ${token}` },
           });
           setCurrentUser(response.data);
@@ -77,7 +77,7 @@ export default function Dashboard() {
 
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("https://the-blog-zone-server.vercel.app/api/blog");
+        const response = await axios.get("http://localhost:8000/api/blog");
         setPosts(response.data);
         setFilteredPosts(response.data);
       } catch (error) {
@@ -126,7 +126,7 @@ export default function Dashboard() {
     setDeletingPostId(postId);
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`https://the-blog-zone-server.vercel.app/api/blog/delete/${postId}`, {
+      await axios.delete(`http://localhost:8000/api/blog/delete/${postId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

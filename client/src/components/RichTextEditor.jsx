@@ -20,8 +20,9 @@ import {
   Loader2,
   Sparkles
 } from 'lucide-react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import { AiWarningDialog } from './AiWarningDialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/utils/supabaseClient';
@@ -36,6 +37,18 @@ const MenuBar = ({ editor }) => {
   const [aiPrompt, setAiPrompt] = useState('improve_writing');
   const [isAiLoading, setIsAiLoading] = useState(false);
   const fileInputRef = useRef(null);
+
+  const [isWarningSuppressed, setIsWarningSuppressed] = useState(true);
+  const [isPrivacyWarningOpen, setIsPrivacyWarningOpen] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      axios.get('http://localhost:8000/api/auth/me', { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => setIsWarningSuppressed(res.data.isWarningSuppressed))
+        .catch(err => console.error("Failed to check privacy preference"));
+    }
+  }, []);
 
   if (!editor) {
     return null;
@@ -109,7 +122,7 @@ const MenuBar = ({ editor }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'https://the-blog-zone-server.vercel.app/api/ai/improve-text',
+        'http://localhost:8000/api/ai/improve-text',
         { text, prompt: aiPrompt },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -276,13 +289,26 @@ const MenuBar = ({ editor }) => {
         size="sm"
         onClick={(e) => {
           e.preventDefault();
-          setIsAiModalOpen(true);
+          if (!isWarningSuppressed) {
+            setIsPrivacyWarningOpen(true);
+          } else {
+            setIsAiModalOpen(true);
+          }
         }}
         className="text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20"
       >
         <Sparkles className="h-4 w-4 mr-1" />
         AI
       </Button>
+
+      <AiWarningDialog 
+        open={isPrivacyWarningOpen} 
+        onOpenChange={setIsPrivacyWarningOpen}
+        onConfirm={() => {
+          setIsWarningSuppressed(true);
+          setIsAiModalOpen(true);
+        }}
+      />
 
       {/* Custom Link Modal */}
       {isLinkModalOpen && (
