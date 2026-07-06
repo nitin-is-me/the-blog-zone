@@ -6,11 +6,11 @@ const router = express.Router();
 
 router.post("/signup", signup);
 router.post("/login", login);
-router.post("/verify-token", verifyToken);
-router.get("/user/:id", user);
+router.get("/verifyToken", verifyToken);
+router.get("/user", user);
 router.get("/me", authenticate, me);
-router.put("/update-profile", authenticate, updateProfile);
-router.put("/change-password", authenticate, changePassword);
+router.put("/updateProfile", authenticate, updateProfile);
+router.put("/changePassword", authenticate, changePassword);
 
 // Password Reset routes
 router.post("/forgot-password", forgotPassword);
