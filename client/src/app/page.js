@@ -72,9 +72,9 @@ export default function Home() {
 
           <Card className="relative border-none shadow-2xl bg-card/50 backdrop-blur-sm">
             <CardHeader className="text-center space-y-3 pt-12 pb-8 flex flex-col items-center">
-              <CardTitle className="text-5xl font-extrabold tracking-tight lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600 pb-2">
+              <h1 className="text-5xl font-extrabold tracking-tight lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600 pb-2">
                 The Blog Zone
-              </CardTitle>
+              </h1>
               <a
                 href="https://github.com/nitin-is-me/the-blog-zone#version-history"
                 target="_blank"

@@ -104,6 +104,7 @@ If you are curious about what's powering this platform under the hood, here's th
 |6.0.0    | **30-Jun-2026** | **The Final Major Update**: Added an Admin Panel for moderation (ban users, delete inappropriate content) plus Email Authentication and Password Recovery. Users can now verify emails with a 6-digit OTP, sign in with email, and reset passwords via "Forgot Password." The platform is now officially feature-complete! |
 |6.0.1    | **01-Jul-2026** | Bug fix: Private post couldn't be saved with images because the encrypted URL was crossing limit of defined length. |
 |6.0.2    | **05-Jul-2026** | Added an AI Privacy Warning popup. Users are now transparently warned before their text is sent to the external AI service for editing/summarization, advising against using it for highly confidential private posts. Users can opt to permanently hide this warning. |
+|6.0.3    | **21-Jul-2026** | Added SEO meta tags, sitemap, robots.txt and basic on-page SEO optimization. |
 
 ## Screenshots
 
