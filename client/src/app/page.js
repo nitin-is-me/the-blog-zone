@@ -81,7 +81,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 hover:border-primary/30 transition-colors cursor-pointer"
               >
-                Version 6.0.2
+                Version 6.0.3
               </a>
               <CardDescription className="text-xl text-muted-foreground max-w-lg mx-auto pt-3">
                 Dive into a world of creativity, ideas, and stories. Share yours or explore what others have to say on a platform that puts your privacy first.
