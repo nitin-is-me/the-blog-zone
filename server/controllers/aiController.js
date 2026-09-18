@@ -55,7 +55,7 @@ exports.summarizeBlog = async (req, res) => {
         { role: 'system', content: systemMessage },
         { role: 'user', content: content }
       ],
-      model: 'llama-3.1-8b-instant',
+      model: 'openai/gpt-oss-20b',
       temperature: 0.3,
       max_tokens: 500,
     });
