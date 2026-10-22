@@ -255,7 +255,7 @@ export default function PrivatePosts() {
             filteredPosts.map((post) => (
               <Card
                 key={post.id}
-                className="flex flex-col overflow-hidden border-muted hover:shadow-lg transition-all hover:border-primary/20 bg-card/50 backdrop-blur-sm cursor-pointer group"
+                className="flex flex-col overflow-hidden border-muted hover:shadow-lg transition-[border-color,box-shadow] hover:border-primary/20 bg-card cursor-pointer group"
                 onClick={() => router.push(`/dashboard/private/${post.id}`)}
               >
                 {post.thumbnail && (

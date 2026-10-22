@@ -218,7 +218,7 @@ export default function Home() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
             >
-              <span>Version 6.1.0</span>
+              <span>Version 6.1.1</span>
               <ChevronRight className="h-3 w-3 opacity-70" />
             </a>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 px-3 py-1 text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
@@ -526,7 +526,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="hover:underline"
               >
-                Version 6.1.0
+                Version 6.1.1
               </a>
               <span>•</span>
               <span className="text-emerald-500 font-medium">Privacy Protected</span>

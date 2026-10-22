@@ -67,7 +67,7 @@ exports.signup = async (req, res) => {
 
     try {
       const mailOptions = {
-        from: process.env.EMAIL_USER,
+        from: `"The Blog Zone" <${process.env.EMAIL_USER}>`,
         to: trimmedEmail,
         subject: "Verify Your Email - The Blog Zone",
         html: `<h2>Welcome to The Blog Zone!</h2>
@@ -187,7 +187,7 @@ exports.resendSignupOtp = async (req, res) => {
     );
 
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: `"The Blog Zone" <${process.env.EMAIL_USER}>`,
       to: decoded.email,
       subject: "Your New Verification Code - The Blog Zone",
       html: `<h2>Your New Verification Code</h2>
@@ -447,7 +447,7 @@ exports.forgotPassword = async (req, res) => {
     await user.save();
 
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: `"The Blog Zone" <${process.env.EMAIL_USER}>`,
       to: user.email,
       subject: "Your Password Reset OTP - The Blog Zone",
       html: `<h2>Password Reset Request</h2>
@@ -550,7 +550,7 @@ exports.requestEmailUpdate = async (req, res) => {
     const emailToken = jwt.sign({ newEmail }, process.env.JWT_SECRET, { expiresIn: '15m' });
 
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: `"The Blog Zone" <${process.env.EMAIL_USER}>`,
       to: newEmail,
       subject: "Verify your Email - The Blog Zone",
       html: `<h2>Email Verification</h2>

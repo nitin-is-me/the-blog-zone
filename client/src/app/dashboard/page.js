@@ -280,7 +280,7 @@ export default function Dashboard() {
             {filteredPosts.map((post) => (
               <Card
                 key={post.id}
-                className="group relative flex flex-col overflow-hidden border-muted transition-all hover:shadow-xl hover:border-primary/20 bg-card/50 backdrop-blur-sm cursor-pointer"
+                className="group relative flex flex-col overflow-hidden border-muted transition-[border-color,box-shadow] hover:shadow-xl hover:border-primary/20 bg-card cursor-pointer"
                 onClick={() => router.push(`/dashboard/${post.id}`)}
               >
                 {post.thumbnail && (

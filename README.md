@@ -107,6 +107,7 @@ If you are curious about what's powering this platform under the hood, here's th
 |6.0.3    | **21-Jul-2026** | Added SEO meta tags, sitemap, robots.txt and basic on-page SEO optimization. |
 |6.0.4    | **22-Oct-2026** | Bug fix: Added a 6-digit OTP verification during signup when an email address is provided. The user account is only created in the database after successful OTP verification, completely preventing orphaned accounts if registration is abandoned. Anonymous signups without email remain instant. |
 |6.1.0    | **22-Oct-2026** | Improved landing page. Added about and privacy policy pages. |
+|6.1.1    | **22-Oct-2026** | Reduced posts' loading time by reducing unecessary bells and whistles. |
 
 ## Screenshots
 
