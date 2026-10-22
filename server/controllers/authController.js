@@ -4,8 +4,29 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
+// Transporter setup
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
 exports.signup = async (req, res) => {
   const { username, password, name, email } = req.body;
+
+  if (!username || !password || !name) {
+    return res.status(400).send("Please fill in all required fields.");
+  }
+
+  if (/\s/.test(username)) {
+    return res.status(400).send("Spaces are not allowed in username.");
+  }
+
+  if (/\s/.test(password)) {
+    return res.status(400).send("Spaces are not allowed in password.");
+  }
 
   // Checking if username already exists
   const existingUser = await Blogger.findOne({ where: { username } });
@@ -13,25 +34,178 @@ exports.signup = async (req, res) => {
     return res.status(400).send("Username already exists!");
   }
 
-  // If email is provided, check if it already exists
-  if (email) {
-    const existingEmail = await Blogger.findOne({ where: { email } });
+  const trimmedEmail = email ? email.trim() : null;
+
+  // Approach B: If email is provided, do NOT insert user yet! Verify email first.
+  if (trimmedEmail) {
+    const existingEmail = await Blogger.findOne({ where: { email: trimmedEmail } });
     if (existingEmail) {
       return res.status(400).send("Email is already in use by another account!");
     }
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+
+    // Pre-hash password with bcrypt
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create temporary signed session token containing user details and hashed OTP (expires in 15 mins)
+    const signupToken = jwt.sign(
+      {
+        username,
+        name: name.trim(),
+        hashedPassword,
+        email: trimmedEmail,
+        otpHash,
+        signupPending: true,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    try {
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: trimmedEmail,
+        subject: "Verify Your Email - The Blog Zone",
+        html: `<h2>Welcome to The Blog Zone!</h2>
+               <p>Hi ${name.trim()},</p>
+               <p>Your 6-digit verification code to complete your registration is:</p>
+               <p><strong style="font-size: 26px; letter-spacing: 3px; color: #4f46e5;">${otp}</strong></p>
+               <p>This code will expire in 15 minutes.</p>
+               <p><em>Note: Your account will only be created after you verify this code. If you close this page or do not verify, no account will be saved.</em></p>`,
+      };
+
+      await transporter.sendMail(mailOptions);
+
+      return res.status(200).json({
+        requiresVerification: true,
+        signupToken,
+        email: trimmedEmail,
+        message: "Verification code sent to your email.",
+      });
+    } catch (mailError) {
+      console.error("Error sending signup verification email:", mailError);
+      return res.status(500).send("Failed to send verification email. Please check your email or try again without email.");
+    }
   }
 
-  // Hashing the password
+  // If NO email was provided: Instant anonymous signup
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  const newUser = await Blogger.create({ username, name, password: hashedPassword, email: email || null });
+  const newUser = await Blogger.create({
+    username,
+    name: name.trim(),
+    password: hashedPassword,
+    email: null,
+  });
 
   const token = jwt.sign({ id: newUser.id, username: newUser.username }, process.env.JWT_SECRET, {
     expiresIn: "365d",
   });
 
   res.status(201).json({ token, message: "User registered successfully" });
+};
+
+exports.verifySignup = async (req, res) => {
+  const { signupToken, otp } = req.body;
+
+  if (!signupToken || !otp) {
+    return res.status(400).send("Signup token and verification code are required.");
+  }
+
+  try {
+    const decoded = jwt.verify(signupToken, process.env.JWT_SECRET);
+    if (!decoded.signupPending || !decoded.otpHash) {
+      return res.status(400).send("Invalid signup session.");
+    }
+
+    // Verify OTP
+    const enteredOtpHash = crypto.createHash("sha256").update(otp.trim()).digest("hex");
+    if (enteredOtpHash !== decoded.otpHash) {
+      return res.status(400).send("Invalid verification code. Please try again.");
+    }
+
+    // Double check username and email availability right before creation
+    const existingUser = await Blogger.findOne({ where: { username: decoded.username } });
+    if (existingUser) {
+      return res.status(400).send("Username was taken while awaiting verification. Please sign up with another username.");
+    }
+
+    const existingEmail = await Blogger.findOne({ where: { email: decoded.email } });
+    if (existingEmail) {
+      return res.status(400).send("Email was linked to another account while awaiting verification.");
+    }
+
+    // CREATE USER IN DATABASE ONLY NOW!
+    const newUser = await Blogger.create({
+      username: decoded.username,
+      name: decoded.name,
+      password: decoded.hashedPassword,
+      email: decoded.email,
+    });
+
+    const token = jwt.sign({ id: newUser.id, username: newUser.username }, process.env.JWT_SECRET, {
+      expiresIn: "365d",
+    });
+
+    return res.status(201).json({ token, message: "Email verified and account created successfully!" });
+  } catch (err) {
+    if (err.name === "TokenExpiredError") {
+      return res.status(400).send("Verification code has expired. Please sign up again.");
+    }
+    console.error("Signup verification error:", err);
+    return res.status(400).send("Invalid or expired verification session.");
+  }
+};
+
+exports.resendSignupOtp = async (req, res) => {
+  const { signupToken } = req.body;
+  if (!signupToken) {
+    return res.status(400).send("Signup session is required.");
+  }
+
+  try {
+    const decoded = jwt.verify(signupToken, process.env.JWT_SECRET);
+    if (!decoded.signupPending) {
+      return res.status(400).send("Invalid signup session.");
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+
+    const newSignupToken = jwt.sign(
+      {
+        ...decoded,
+        otpHash,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: decoded.email,
+      subject: "Your New Verification Code - The Blog Zone",
+      html: `<h2>Your New Verification Code</h2>
+             <p>Hi ${decoded.name},</p>
+             <p>Your new 6-digit verification code is:</p>
+             <p><strong style="font-size: 26px; letter-spacing: 3px; color: #4f46e5;">${otp}</strong></p>
+             <p>This code will expire in 15 minutes.</p>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return res.status(200).json({
+      signupToken: newSignupToken,
+      message: "New verification code sent to your email.",
+    });
+  } catch (err) {
+    return res.status(400).send("Signup session expired. Please go back and sign up again.");
+  }
 };
 
 exports.login = async (req, res) => {
@@ -246,15 +420,7 @@ exports.changePassword = async (req, res) => {
     return res.status(500).json({ error: "Failed to change password" });
   }
 };
-
-// Transporter setup
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// Forgot password controller
 
 exports.forgotPassword = async (req, res) => {
   const { identifier } = req.body;

@@ -1,10 +1,12 @@
 const express = require("express");
-const { signup, login, verifyToken, user, me, updateProfile, changePassword, forgotPassword, verifyOtp, resetPassword, requestEmailUpdate, verifyEmailUpdate, suppressWarning } = require("../controllers/authController");
+const { signup, verifySignup, resendSignupOtp, login, verifyToken, user, me, updateProfile, changePassword, forgotPassword, verifyOtp, resetPassword, requestEmailUpdate, verifyEmailUpdate, suppressWarning } = require("../controllers/authController");
 const authenticate = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
 router.post("/signup", signup);
+router.post("/verify-signup", verifySignup);
+router.post("/resend-signup-otp", resendSignupOtp);
 router.post("/login", login);
 router.get("/verifyToken", verifyToken);
 router.get("/user", user);

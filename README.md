@@ -9,7 +9,7 @@ The Blog Zone is your **privacy-first**, personal or public blogging platform wi
 
 ## Features
 ### Account creation
-You don't need an email or any type of real-world identity to signup, ensuring **complete anonymity**. Just create a username, enter a strong password and you're done.
+You don't need an email or any type of real-world identity to signup, ensuring **complete anonymity**. Just create a username, enter a strong password and you're done. If you choose to provide an optional email for password recovery, a 6-digit OTP code verifies your email address before the account is finalized in the database.
 
 ### Email Authentication & Password Recovery
 While not required (because I respect users who don't want to link emails to their accounts for anonymity), **it is highly recommended** to link an email address to your account from your Profile Settings. Adding an email activates our secure 6-digit OTP verification flow. This not only allows you to log in seamlessly using your email address, but more importantly, gives you access to the fully integrated "Forgot Password" flow to recover your account if you ever get locked out!
@@ -105,6 +105,7 @@ If you are curious about what's powering this platform under the hood, here's th
 |6.0.1    | **01-Jul-2026** | Bug fix: Private post couldn't be saved with images because the encrypted URL was crossing limit of defined length. |
 |6.0.2    | **05-Jul-2026** | Added an AI Privacy Warning popup. Users are now transparently warned before their text is sent to the external AI service for editing/summarization, advising against using it for highly confidential private posts. Users can opt to permanently hide this warning. |
 |6.0.3    | **21-Jul-2026** | Added SEO meta tags, sitemap, robots.txt and basic on-page SEO optimization. |
+|6.0.4    | **22-Oct-2026** | Bug fix: Added a 6-digit OTP verification during signup when an email address is provided. The user account is only created in the database after successful OTP verification, completely preventing orphaned accounts if registration is abandoned. Anonymous signups without email remain instant. |
 
 ## Screenshots
 
