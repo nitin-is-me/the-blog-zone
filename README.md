@@ -30,7 +30,7 @@ You can comment on a post to tell what you feel about the post, and can delete i
 You can change your display name, username (this part was really tough) and password by clicking on the top left icon on dashboard page. Spaces in password and username are not allowed from now.
 
 ### Private posts will be encrypted
-Your private posts are **protected with military-grade AES encryption**. Both the title and content will be securely encrypted on the server before saving to the database, ensuring that **not even the database administrators** can read your content. They'll only decrypt if the original author themselves is trying to access the post. Editing the private post will replace those characters with different random ones (example below). If you choose to make a private post public, then it'll decrypt the post permanently and add to public posts. Downside: Now you can't share private posts with URL to anyone, because they aren't the author of the post so there will be an error while decryption.
+Your private posts are **protected with military-grade encryption**. Both the title and content will be securely encrypted on the server before saving to the database, ensuring that **not even the database administrators** can read your content. They'll only decrypt if the original author themselves is trying to access the post. Editing the private post will replace those characters with different random ones (example below). If you choose to make a private post public, then it'll decrypt the post permanently and add to public posts. Downside: Now you can't share private posts with URL to anyone, because they aren't the author of the post so there will be an error while decryption.
 
 #### Database Representation
 This is how public posts appear in the database:
@@ -64,7 +64,7 @@ If you are curious about what's powering this platform under the hood, here's th
 - **Frontend**: Built with Next.js (React), styled with Tailwind CSS, and using Shadcn/UI for component design. The editor uses Tiptap.
 - **Backend**: Node.js and Express.js.
 - **Database**: PostgreSQL (migrated from MongoDB for strong relations). The infinitely nested comments use an efficient Adjacency List model in SQL.
-- **Security**: Node's built-in `crypto` library is used for AES encryption/decryption of private posts on the server.
+- **Security**: Node's built-in `crypto` library is used for AES-256 encryption/decryption of private posts on the server.
 - **Storage**: Supabase storage buckets handle all the direct client-to-server image uploads and auto-cleanup.
 - **AI Integration**: Powered by Groq's `openai/gpt-oss-20b` model for instant text processing.
 - **Hosting**: The entire application is hosted and deployed on Vercel.
@@ -106,6 +106,7 @@ If you are curious about what's powering this platform under the hood, here's th
 |6.0.2    | **05-Jul-2026** | Added an AI Privacy Warning popup. Users are now transparently warned before their text is sent to the external AI service for editing/summarization, advising against using it for highly confidential private posts. Users can opt to permanently hide this warning. |
 |6.0.3    | **21-Jul-2026** | Added SEO meta tags, sitemap, robots.txt and basic on-page SEO optimization. |
 |6.0.4    | **22-Oct-2026** | Bug fix: Added a 6-digit OTP verification during signup when an email address is provided. The user account is only created in the database after successful OTP verification, completely preventing orphaned accounts if registration is abandoned. Anonymous signups without email remain instant. |
+|6.1.0    | **22-Oct-2026** | Improved landing page. Added about and privacy policy pages. |
 
 ## Screenshots
 
@@ -126,7 +127,7 @@ The central workspace for browsing articles, managing blog posts, searching cont
 ### Private Dashboard
 <img width="1280" height="612" alt="Private Dashboard" src="https://github.com/user-attachments/assets/f3f360f8-9527-4104-81ca-b73d59254f85" />
 
-Dedicated workspace for encrypted private posts. Only the author can decrypt and access their content, ensuring privacy through server-side AES encryption.
+Dedicated workspace for encrypted private posts. Only the author can decrypt and access their content, ensuring privacy through military-grade server-side encryption.
 
 ---
 
