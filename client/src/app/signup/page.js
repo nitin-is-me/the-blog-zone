@@ -302,7 +302,7 @@ export default function SignupPage() {
               </div>
               <CardTitle className="text-2xl font-bold text-center text-primary">Verify Your Email</CardTitle>
               <CardDescription className="text-center">
-                We sent a 6-digit verification code to <span className="font-medium text-foreground">{email}</span>.
+                A 6-digit verification code was sent to <span className="font-medium text-foreground">{email}</span>.
               </CardDescription>
             </CardHeader>
             <CardContent>

@@ -161,7 +161,7 @@ export default function ForgotPasswordPage() {
           {step === 2 && (
             <form onSubmit={handleVerifyOtp} className="space-y-4">
               <p className="text-sm text-center text-muted-foreground mb-4">
-                We sent a 6-digit code to <strong>{emailToDisplay}</strong>. It expires in 15 minutes.
+                A 6-digit code was sent to <strong>{emailToDisplay}</strong>. It expires in 15 minutes.
               </p>
               <div className="space-y-2">
                 <Label htmlFor="otp">6-Digit Code</Label>

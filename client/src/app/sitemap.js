@@ -4,6 +4,8 @@ export default async function sitemap() {
   // Core static routes
   const routes = [
     "",
+    "/about",
+    "/privacy",
     "/login",
     "/signup",
     "/dashboard",

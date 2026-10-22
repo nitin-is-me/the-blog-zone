@@ -193,7 +193,7 @@ export default function CreateBlogPage() {
                   className="underline hover:text-primary transition-colors"
                   target='_blank'
                   rel='noopener noreferrer'>
-                  Learn more about our security.
+                  Learn more about security & encryption.
                 </Link>
               </div>
             </div>

@@ -447,7 +447,7 @@ export default function Profile() {
           <DialogHeader>
             <DialogTitle>Verify your New Email</DialogTitle>
             <DialogDescription>
-              We've sent a 6-digit OTP to <strong>{formData.email}</strong>.
+              A 6-digit OTP was sent to <strong>{formData.email}</strong>.
               Please enter it below to verify and link this email.
             </DialogDescription>
           </DialogHeader>

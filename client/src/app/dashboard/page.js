@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { formatTimeAgo } from "../utils/formatTime";
 import { stripHtml } from "@/utils/stripHtml";
@@ -169,7 +170,14 @@ export default function Dashboard() {
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-8">
           <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <Image
+                src="/favicon.ico"
+                alt="The Blog Zone Logo"
+                width={28}
+                height={28}
+                className="h-7 w-7 rounded-lg object-contain group-hover:scale-105 transition-transform"
+              />
               <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600">
                 The Blog Zone
               </span>
@@ -354,7 +362,7 @@ export default function Dashboard() {
             </div>
             <h3 className="mt-4 text-lg font-semibold text-foreground">No posts found</h3>
             <p className="mt-2 text-sm text-muted-foreground max-w-sm mx-auto">
-              We couldn't find any posts matching your search. Try adjusting your filters or search terms.
+              No posts matched your search. Try adjusting your filters or search terms.
             </p>
             <Button
               variant="outline"
