@@ -111,7 +111,7 @@ If you are curious about what's powering this platform under the hood, here's th
 ## Screenshots
 
 ### Landing Page
-<img width="1280" height="606" alt="Landing Page" src="https://github.com/user-attachments/assets/46054b3c-0154-4649-a19c-a1cb4124455b" />
+<img width="1351" height="650" alt="image" src="https://github.com/user-attachments/assets/29e6337f-2c18-42c7-82bd-863738f6fb73" />
 
 Modern landing page introducing **The Blog Zone**, featuring a clean dark-themed interface, project branding, and quick access to the blogging dashboard for authenticated users.
 
