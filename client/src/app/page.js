@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -8,6 +8,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { ModeToggle } from "@/components/mode-toggle";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Shield,
   Lock,
@@ -28,36 +29,55 @@ import {
   ShieldCheck
 } from "lucide-react";
 
+const AUTH_API = "https://the-blog-zone-server.vercel.app/api/auth";
+const SESSION_STORAGE_KEY = "token";
+
+// The session lives in localStorage, which the server render cannot read, so the
+// first client render has to start out undecided. Layout effects run before the
+// browser paints after hydration, which lets us settle the state without a flash.
+const useBeforePaintEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
 export default function Home() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  // "unknown" = a stored session is still being verified, so we must not show
+  // the signed-out CTAs yet. "signed-out" is known immediately when no token exists.
+  const [authStatus, setAuthStatus] = useState("unknown");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        try {
-          const response = await axios.get("https://the-blog-zone-server.vercel.app/api/auth/verifyToken", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          if (response.status === 200) {
-            setIsAuthenticated(true);
-          }
-        } catch (error) {
-          console.error("Token verification failed:", error);
-          setIsAuthenticated(false);
-          localStorage.removeItem("token");
-        }
+  useBeforePaintEffect(() => {
+    const token = localStorage.getItem(SESSION_STORAGE_KEY);
+
+    if (!token) {
+      setAuthStatus("signed-out");
+      return;
+    }
+
+    let cancelled = false;
+
+    const verifySession = async () => {
+      try {
+        await axios.get(`${AUTH_API}/verifyToken`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!cancelled) setAuthStatus("signed-in");
+      } catch (error) {
+        console.error("Token verification failed:", error);
+        localStorage.removeItem(SESSION_STORAGE_KEY);
+        if (!cancelled) setAuthStatus("signed-out");
       }
-      setLoading(false);
     };
 
-    checkAuth();
+    verifySession();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
+  const isCheckingAuth = authStatus === "unknown";
+  const isAuthenticated = authStatus === "signed-in";
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground relative selection:bg-primary selection:text-primary-foreground">
@@ -104,8 +124,12 @@ export default function Home() {
           {/* Right Action Area (Desktop) */}
           <div className="hidden md:flex items-center gap-3">
             <ModeToggle />
-            {loading ? (
-              <div className="h-9 w-24 bg-muted animate-pulse rounded-md" />
+            {isCheckingAuth ? (
+              <div className="flex items-center gap-2" role="status" aria-live="polite">
+                <Skeleton className="h-9 w-16 rounded-full" />
+                <Skeleton className="h-9 w-20 rounded-full" />
+                <span className="sr-only">Checking sign-in status…</span>
+              </div>
             ) : isAuthenticated ? (
               <Button asChild className="rounded-full shadow-md bg-primary hover:bg-primary/90">
                 <Link href="/dashboard" className="gap-2">
@@ -177,7 +201,13 @@ export default function Home() {
             </nav>
 
             <div className="pt-2 border-t flex flex-col gap-2.5">
-              {isAuthenticated ? (
+              {isCheckingAuth ? (
+                <>
+                  <Skeleton className="h-12 w-full rounded-xl" />
+                  <Skeleton className="h-12 w-full rounded-xl" />
+                  <span className="sr-only">Checking sign-in status…</span>
+                </>
+              ) : isAuthenticated ? (
                 <Button asChild className="w-full rounded-xl py-5 text-base">
                   <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
                     Go to Dashboard
@@ -218,7 +248,7 @@ export default function Home() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
             >
-              <span>Version 6.1.1</span>
+              <span>Version 6.1.2</span>
               <ChevronRight className="h-3 w-3 opacity-70" />
             </a>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 px-3 py-1 text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
@@ -242,7 +272,9 @@ export default function Home() {
 
           {/* Action CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-            {isAuthenticated ? (
+            {isCheckingAuth ? (
+              <Skeleton className="h-[72px] w-full sm:w-64 rounded-full" role="status" aria-label="Checking sign-in status" />
+            ) : isAuthenticated ? (
               <Button size="lg" asChild className="w-full sm:w-auto text-base px-8 py-6 rounded-full shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform">
                 <Link href="/dashboard" className="gap-2 font-semibold">
                   Go to Dashboard
@@ -437,7 +469,9 @@ export default function Home() {
             Create an anonymous account in under 30 seconds or explore articles written by independent thinkers.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-            {isAuthenticated ? (
+            {isCheckingAuth ? (
+              <Skeleton className="h-10 w-full sm:w-48 rounded-full" role="status" aria-label="Checking sign-in status" />
+            ) : isAuthenticated ? (
               <Button size="lg" asChild className="w-full sm:w-auto px-8 rounded-full">
                 <Link href="/dashboard">Return to Dashboard</Link>
               </Button>
@@ -526,7 +560,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="hover:underline"
               >
-                Version 6.1.1
+                Version 6.1.2
               </a>
               <span>•</span>
               <span className="text-emerald-500 font-medium">Privacy Protected</span>
